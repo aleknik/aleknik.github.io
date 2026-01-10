@@ -6,7 +6,7 @@ function Hero() {
       <div className="hero-content">
         <div className="avatar-container">
           <div className="avatar">
-            <img src="/android-chrome-192x192.png" alt="Aleksandar Nikolic" className="avatar-logo" />
+            <img src="/icons/android-chrome-192x192.png" alt="Aleksandar Nikolic" className="avatar-logo" />
           </div>
         </div>
         
