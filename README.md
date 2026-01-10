@@ -1,38 +1,74 @@
-# Dev Landing Page
+# Aleksandar Nikolic - Personal Landing Page
 
-Minimal landing page for developers.
+A modern, mobile-first personal landing page built with React and Vite.
 
-Developers don't talk much. Their code does all the talking. So here's a minimal landing page for developers.
+## 🚀 Features
 
-## Why? [![start with why](https://img.shields.io/badge/start%20with-why%3F-brightgreen.svg?style=flat)](http://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action)
+- ⚡ **Fast** - Built with Vite for lightning-fast development and builds
+- 📱 **Mobile-first** - Responsive design that looks great on all devices
+- 🎨 **Modern UI** - Dark theme with animated particle background
+- 📦 **PWA Ready** - Works offline and can be installed as an app
+- 🚀 **Auto Deploy** - Automatically deploys to GitHub Pages on push
 
-I wanted a dev landing page to showcase everything I do online and I wanted it to be minimal and right to the point rather beautiful and hefty. And I think most of the devs out there would want the same.
+## 🛠️ Tech Stack
 
-So I sat down one night and created this **Dev Landing Page**. Feel free to fork, clone, play around and make this your own.
+- React 18
+- Vite 5
+- Vite PWA Plugin
+- GitHub Actions for CI/CD
 
-## Themes
+## 📦 Development
 
-Dev Landing Page comes in 9 **material themes**.
+### Prerequisites
 
-![9 Material Themes](https://image.ibb.co/jJVKCn/dev_landing_page_themes.jpg)
+- Node.js 18+ 
+- npm or yarn
 
-If none of these themes fit within your taste, it's quite easy to customize and create your own too. 
+### Getting Started
 
-## GitHub Pages
+```bash
+# Install dependencies
+npm install
 
-GitHub makes it easy to create personal websites. Follow this link - [GitHub Pages](https://pages.github.com/) to know how or follow the steps below.
+# Start development server
+npm run dev
 
-If you already have a GitHub profile (obviously)
+# Build for production
+npm run build
 
-* Create a new repo with the name `{username}.github.io`
-* Clone/Fork this repo and copy the files to your newly created repo
-* Customize your name, links and everything else for your landing page
-* `git push`
+# Preview production build
+npm run preview
+```
 
-Voila! Your site should be live at `https://{username}.github.io`
+### Project Structure
 
-My **Dev Landing Page** is in my favourite yellow theme - [Dinesh Pandiyan](https://flexdinesh.github.io)
+```
+├── public/              # Static assets (favicons, icons)
+├── src/
+│   ├── components/      # React components
+│   │   ├── Background.jsx
+│   │   ├── Hero.jsx
+│   │   └── SocialLinks.jsx
+│   ├── App.jsx          # Main app component
+│   ├── App.css          # App styles
+│   ├── index.css        # Global styles
+│   └── main.jsx         # Entry point
+├── index.html           # HTML template
+├── vite.config.js       # Vite configuration
+└── package.json
+```
 
-## License
+## 🌐 Deployment
 
-MIT © Dinesh Pandiyan
+This site automatically deploys to GitHub Pages when you push to the `main` branch.
+
+### Manual Deployment
+
+```bash
+npm run build
+npm run deploy
+```
+
+## 📄 License
+
+MIT
