@@ -28,7 +28,6 @@ export const contactLinks = [
 
 export const emailContact = {
   encoded: 'bmlrb2xpYzk1QGdtYWlsLmNvbQ==',
-  readable: 'nikolic95 at gmail dot com',
 } as const
 
 export const personSchema = {

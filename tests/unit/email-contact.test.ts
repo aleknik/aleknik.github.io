@@ -3,12 +3,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { enhanceEmailContact } from '../../src/lib/email-contact'
 
 const email = 'hello@example.com'
+const fallback =
+  'Email requires JavaScript. Please connect on LinkedIn instead.'
 
 function createControl() {
   const details = document.createElement('details')
   details.dataset['email'] = btoa(email)
   details.innerHTML =
-    '<summary>Email</summary><p data-email-address>hello at example dot com</p><a data-email-link hidden>Open email app</a><button data-email-copy hidden>Copy address</button><p role="status"></p>'
+    '<summary>Email</summary><p data-email-address>Email requires JavaScript. Please connect on LinkedIn instead.</p><a data-email-link hidden>Open email app</a><button data-email-copy hidden>Copy address</button><p role="status"></p>'
   document.body.append(details)
   const address = details.querySelector('p')!
   const link = details.querySelector('a')!
@@ -27,7 +29,7 @@ describe('progressively enhanced email contact', () => {
   it('keeps the address obfuscated until opened and then reveals a working link', () => {
     const { details, address, link, button, open } = createControl()
     enhanceEmailContact(details, { writeText: vi.fn() })
-    expect(address.textContent).toBe('hello at example dot com')
+    expect(address.textContent).toBe(fallback)
     expect(link.hasAttribute('href')).toBe(false)
     expect(button.hidden).toBe(true)
     open()
@@ -120,8 +122,8 @@ describe('progressively enhanced email contact', () => {
       enhanceEmailContact(details, { writeText: vi.fn() })
       open()
       expect(link.hasAttribute('href')).toBe(false)
-      expect(address.textContent).toBe('hello at example dot com')
-      expect(status.textContent).toContain('connect on LinkedIn')
+      expect(address.textContent).toBe(fallback)
+      expect(status.textContent).toBe('Please connect on LinkedIn instead.')
       expect(log).toHaveBeenCalled()
     },
   )

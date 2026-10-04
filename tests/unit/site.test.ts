@@ -48,9 +48,9 @@ describe('public profile content', () => {
     expect(personSchema).not.toHaveProperty('award')
     expect(personSchema).not.toHaveProperty('email')
     expect(profile).not.toHaveProperty('email')
-    expect(
-      atob(emailContact.encoded).replace('@', ' at ').replaceAll('.', ' dot '),
-    ).toBe(emailContact.readable)
+    expect(atob(emailContact.encoded)).toMatch(
+      /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    )
     expect(contactLinks[0].primary).toBe(true)
   })
 })

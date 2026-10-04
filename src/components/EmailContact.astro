@@ -5,10 +5,12 @@ import Icon from './Icon.astro'
 
 <details class="email-contact" data-email={emailContact.encoded}>
   <summary>
-    Email <Icon name="plus" size={14} />
+    Email me <Icon name="plus" size={14} />
   </summary>
   <div class="email-panel">
-    <p data-email-address>{emailContact.readable}</p>
+    <p data-email-address>
+      Email requires JavaScript. Please connect on LinkedIn instead.
+    </p>
     <div class="email-actions">
       <a data-email-link hidden>
         Open email app <Icon name="arrow-up-right" size={14} />
