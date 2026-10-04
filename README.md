@@ -42,9 +42,8 @@ npm run preview
 - [tests/](tests/): unit/component tests and production-browser tests.
 
 Content and social links work with JavaScript disabled. External links announce
-that they open a new tab. Email uses a native disclosure with a readable at/dot
-fallback; JavaScript reveals the address and enables click-to-email and clipboard
-copy after opening it.
+that they open a new tab. Email uses a native disclosure; JavaScript reveals the
+address and enables click-to-email and clipboard copy after opening it.
 
 ### Email harvesting deterrence
 
