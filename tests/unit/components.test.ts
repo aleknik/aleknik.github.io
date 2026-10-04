@@ -51,7 +51,8 @@ describe('static components', () => {
     expect(content.querySelector('nav')?.getAttribute('aria-label')).toBe(
       'Contact links',
     )
-    expect(content.querySelectorAll('a')).toHaveLength(3)
+    expect(content.querySelectorAll('a')).toHaveLength(2)
+    expect(content.querySelectorAll('a[href]')).toHaveLength(1)
     expect(content.querySelector('a')?.getAttribute('href')).toBe(
       'https://www.linkedin.com/in/aleknik',
     )

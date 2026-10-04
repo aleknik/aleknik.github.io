@@ -52,6 +52,8 @@ test('renders the full profile and working destinations without runtime errors',
   await expect(page.locator('#about .location')).toHaveText('Belgrade, Serbia')
 
   const contacts = page.getByRole('navigation', { name: 'Contact links' })
+  await expect(contacts.getByRole('link')).toHaveCount(1)
+  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0)
   for (const link of contactLinks) {
     const anchor = contacts.getByRole('link', {
       name: `${link.label} (opens in a new tab)`,
@@ -124,13 +126,6 @@ test('supports keyboard navigation and existing section bookmarks', async ({
     }),
   ).toBeFocused()
   await page.keyboard.press(nextLink)
-  await expect(
-    page.getByRole('link', {
-      name: 'GitHub (opens in a new tab)',
-      exact: true,
-    }),
-  ).toBeFocused()
-  await page.keyboard.press(nextLink)
   await expect(page.locator('summary')).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.locator('[data-email-address]')).toHaveText(email)
@@ -177,6 +172,44 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
         document.documentElement.clientWidth,
     ),
   ).toBe(true)
+})
+
+test('aligns the header, profile text, contacts, and footer to one left edge', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(page.locator('.primary')).toHaveCSS(
+    'justify-content',
+    'flex-start',
+  )
+  await expect(page.locator('.primary')).toHaveCSS('text-align', 'left')
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    const edges = await page.evaluate(() =>
+      [
+        'header a',
+        '.role',
+        'h1 > span:first-child',
+        '.surname',
+        '.location',
+        '.primary',
+        'summary',
+        'footer small',
+      ].map((selector) => {
+        const element = document.querySelector(selector)
+        if (!element) throw new Error(`Missing alignment target: ${selector}`)
+        return { selector, left: element.getBoundingClientRect().left }
+      }),
+    )
+    const reference = edges.find(({ selector }) => selector === '.role')
+    if (!reference) throw new Error('Missing profile alignment reference.')
+    for (const edge of edges) {
+      expect(
+        Math.abs(edge.left - reference.left),
+        `${edge.selector} must align with the role at ${width}px`,
+      ).toBeLessThanOrEqual(0.5)
+    }
+  }
 })
 
 test('honors reduced motion without running a background animation', async ({
@@ -366,10 +399,7 @@ test('has valid canonical, social, crawler, and install metadata', async ({
     .evaluate((script) => JSON.parse(script.textContent ?? ''))
   expect(schema['@type']).toBe('Person')
   expect(schema.name).toBe(profile.name)
-  expect(schema.sameAs).toEqual([
-    'https://www.linkedin.com/in/aleknik',
-    'https://github.com/aleknik',
-  ])
+  expect(schema.sameAs).toEqual(['https://www.linkedin.com/in/aleknik'])
   expect(schema).not.toHaveProperty('email')
 
   const robots = await request.get('/robots.txt')

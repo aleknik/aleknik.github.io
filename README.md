@@ -4,7 +4,7 @@ A small, fast personal site at [aleknik.com](https://aleknik.com/). Built with A
 TypeScript, and scoped CSS. The full page is rendered at build time: there is no
 React runtime, hydration, canvas animation, analytics, or third-party asset request.
 The dark-blue profile keeps the copy short, uses a static geometric monogram, and
-makes LinkedIn the primary way to connect. GitHub and email are secondary.
+makes LinkedIn the primary way to connect, with email as the only secondary option.
 
 ## Development
 
@@ -32,7 +32,8 @@ npm run preview
 - [src/layouts/PageLayout.astro](src/layouts/PageLayout.astro): document metadata,
   skip navigation, the shared footer, and offline registration.
 - [src/styles/global.css](src/styles/global.css): design tokens, typography,
-  shared controls, focus states, and reduced-motion support.
+  shared page insets, controls, focus states, and reduced-motion support. The
+  header, profile content, and footer use the same responsive left alignment.
 - [src/lib/](src/lib/): typed icons and progressively enhanced email disclosure.
   Decode and clipboard failures are announced and logged.
 - [src/pages/](src/pages/): homepage, real 404 page, sitemap, robots file, and
@@ -96,7 +97,7 @@ Chrome, and iPhone-sized Safari:
 - Factual, concise content, a dark-blue palette, LinkedIn priority, no font downloads,
   contact destinations, and absence of page errors.
 - Keyboard/skip navigation, existing section bookmarks, reduced motion, 320-1440px layouts,
-  and 200% text sizing.
+  consistent left alignment, and 200% text sizing.
 - User-triggered email reveal, no raw address in initial output, written no-JS fallback,
   clipboard success, permission denial, missing APIs, and Chromium's native clipboard.
 - Fully functional HTML without JavaScript.

@@ -8,6 +8,7 @@
   --muted: #a0aec3;
   --blue: #87b4ff;
   --line: #243249;
+  --content-inset: clamp(20px, 5vw, 56px);
   --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 }
 
@@ -95,6 +96,11 @@ h1 {
 .container {
   width: min(58rem, calc(100% - 48px));
   margin-inline: auto;
+}
+
+.content-aligned {
+  /* Include the profile card's 1px border in the shared inset. */
+  padding-inline: calc(var(--content-inset) + 1px);
 }
 
 .skip-link {

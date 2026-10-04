@@ -24,12 +24,6 @@ export const contactLinks = [
     href: 'https://www.linkedin.com/in/aleknik',
     primary: true,
   },
-  {
-    name: 'GitHub',
-    label: 'GitHub',
-    href: 'https://github.com/aleknik',
-    primary: false,
-  },
 ] as const satisfies readonly ContactLink[]
 
 export const emailContact = {

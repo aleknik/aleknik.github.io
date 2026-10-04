@@ -13,9 +13,9 @@ describe('public profile content', () => {
     expect(`${profile.firstName} ${profile.lastName}`).toBe(profile.name)
     expect(profile.description).toContain(profile.name)
     expect(`${profile.city}, ${profile.country}`).toBe('Belgrade, Serbia')
+    expect(contactLinks.map(({ name }) => name)).toEqual(['LinkedIn'])
     expect(contactLinks.map(({ href }) => href)).toEqual([
       'https://www.linkedin.com/in/aleknik',
-      'https://github.com/aleknik',
     ])
   })
 
@@ -42,10 +42,7 @@ describe('public profile content', () => {
       name: profile.name,
       url: profile.siteUrl,
       homeLocation: { '@type': 'Place', name: 'Belgrade, Serbia' },
-      sameAs: [
-        'https://www.linkedin.com/in/aleknik',
-        'https://github.com/aleknik',
-      ],
+      sameAs: ['https://www.linkedin.com/in/aleknik'],
     })
     expect(personSchema).not.toHaveProperty('worksFor')
     expect(personSchema).not.toHaveProperty('award')
