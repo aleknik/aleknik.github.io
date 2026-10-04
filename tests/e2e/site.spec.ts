@@ -55,7 +55,9 @@ test('renders the full profile and working destinations without runtime errors',
 
   const contacts = page.getByRole('navigation', { name: 'Contact links' })
   await expect(contacts.getByRole('link')).toHaveCount(1)
-  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0)
+  await expect(
+    page.locator('a[href="https://github.com/aleknik"]'),
+  ).toHaveCount(1)
   for (const link of contactLinks) {
     const anchor = contacts.getByRole('link', {
       name: `${link.label} (opens in a new tab)`,

@@ -9,9 +9,13 @@ import Icon from './Icon.astro'
     <span class="surname">{profile.lastName}</span>
   </h1>
   <div class="details">
-    <p class="role"><Icon name="code" size={26} />{profile.role}</p>
+    <p class="role">
+      <Icon name="code" size={26} />
+      {profile.role}
+    </p>
     <p class="location">
-      <Icon name="map-pin" size={26} />{profile.city}, {profile.country}
+      <Icon name="map-pin" size={26} />
+      {profile.city}, {profile.country}
     </p>
   </div>
 </section>
