@@ -77,7 +77,8 @@ Chrome, and iPhone-sized Safari:
 - Fully functional HTML without JavaScript.
 - Offline reloads, locally cached fonts, and the install manifest.
 - Canonical/social metadata, crawler files, image sizes, and 404 recovery.
-- Automated WCAG 2.2 AA checks on the homepage and 404 page using axe.
+- Automated WCAG 2.2 AA checks on the homepage and 404 page using axe, including
+  explicit label-in-name checks for screen readers and voice control.
 - Mobile-sized LCP below 2.5 seconds and CLS below 0.1 with 4x CPU throttling,
   150ms latency, and a 1.6 Mbps download connection.
 

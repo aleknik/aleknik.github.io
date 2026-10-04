@@ -1,6 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container'
 import { Window } from 'happy-dom'
 import { describe, expect, it } from 'vitest'
+import Brand from '../../src/components/Brand.astro'
 import ContactCard from '../../src/components/ContactCard.astro'
 import CopyEmail from '../../src/components/CopyEmail.astro'
 import Icon from '../../src/components/Icon.astro'
@@ -14,6 +15,14 @@ function parse(html: string) {
 }
 
 describe('static components', () => {
+  it('includes the visible brand handle in the home link name', async () => {
+    const container = await AstroContainer.create()
+    const html = await container.renderToString(Brand)
+    expect(parse(html).querySelector('a')?.getAttribute('aria-label')).toBe(
+      `${profile.handle}. ${profile.name}, home`,
+    )
+  })
+
   it.each(contactLinks)('renders the $name contact card', async (link) => {
     const container = await AstroContainer.create()
     const html = await container.renderToString(ContactCard, {
@@ -30,8 +39,9 @@ describe('static components', () => {
     expect(anchor?.getAttribute('rel')).toBe(
       link.external ? 'noopener noreferrer' : null,
     )
-    expect(anchor?.getAttribute('aria-label')).toBe(
-      `${link.name}${link.external ? ' (opens in a new tab)' : ''}`,
+    expect(anchor?.hasAttribute('aria-label')).toBe(false)
+    expect(card.textContent?.includes('(opens in a new tab)')).toBe(
+      link.external,
     )
   })
 

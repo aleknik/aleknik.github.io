@@ -30,7 +30,7 @@ test('renders the full profile and working destinations without runtime errors',
   const contacts = page.getByRole('region', { name: 'Find me elsewhere' })
   for (const link of contactLinks) {
     const anchor = contacts.getByRole('link', {
-      name: `${link.name}${link.external ? ' (opens in a new tab)' : ''}`,
+      name: `${link.name} ${link.description} ${link.label}${link.external ? ' (opens in a new tab)' : ''}`,
       exact: true,
     })
     await expect(anchor).toHaveAttribute('href', link.href)
@@ -80,7 +80,9 @@ test('supports skip navigation, section links, and returning to the top', async 
   await page.getByRole('link', { name: 'Back to top' }).click()
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
   await expect(
-    page.getByRole('link', { name: `${profile.name}, home` }),
+    page.getByRole('link', {
+      name: `${profile.handle}. ${profile.name}, home`,
+    }),
   ).toBeInViewport()
 })
 
@@ -101,9 +103,7 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
       `horizontal overflow at ${width}px`,
     ).toBeLessThanOrEqual(dimensions.viewport)
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-    await expect(
-      page.getByRole('link', { name: 'Email', exact: true }),
-    ).toBeVisible()
+    await expect(page.getByRole('link', { name: /^Email\b/ })).toBeVisible()
   }
 
   await page.setViewportSize({ width: 320, height: 900 })
@@ -179,9 +179,10 @@ test('reports a denied clipboard permission and keeps the email link usable', as
   await expect(
     page.getByRole('button', { name: 'Copy email address' }),
   ).toBeEnabled()
-  await expect(
-    page.getByRole('link', { name: 'Email', exact: true }),
-  ).toHaveAttribute('href', `mailto:${profile.email}`)
+  await expect(page.getByRole('link', { name: /^Email\b/ })).toHaveAttribute(
+    'href',
+    `mailto:${profile.email}`,
+  )
   expect(
     errors.some((error) => error.includes('Could not copy the email address.')),
   ).toBe(true)
@@ -201,9 +202,7 @@ test('provides a fallback when the Clipboard API is unavailable', async ({
     page.getByRole('button', { name: 'Copy email address' }),
   ).toBeHidden()
   await expect(page.getByRole('status')).toContainText('select the address')
-  await expect(
-    page.getByRole('link', { name: 'Email', exact: true }),
-  ).toBeVisible()
+  await expect(page.getByRole('link', { name: /^Email\b/ })).toBeVisible()
 })
 
 test('reloads the styled page and manifest offline after the first visit', async ({
@@ -231,9 +230,7 @@ test('reloads the styled page and manifest offline after the first visit', async
       'background-color',
       'rgb(246, 247, 242)',
     )
-    await expect(
-      page.getByRole('link', { name: 'Email', exact: true }),
-    ).toBeVisible()
+    await expect(page.getByRole('link', { name: /^Email\b/ })).toBeVisible()
     const manifest = await page.evaluate(async () =>
       (await fetch('/manifest.webmanifest')).json(),
     )
@@ -333,7 +330,17 @@ test('passes WCAG 2.2 AA automated checks on both pages', async ({ page }) => {
     await page.goto(path)
     await page.evaluate(() => document.fonts.ready)
     const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice'])
+      .options({
+        rules: { 'label-content-name-mismatch': { enabled: true } },
+      })
+      .withTags([
+        'wcag2a',
+        'wcag2aa',
+        'wcag21a',
+        'wcag21aa',
+        'wcag22aa',
+        'best-practice',
+      ])
       .analyze()
     expect(results.violations, `accessibility violations on ${path}`).toEqual(
       [],
@@ -351,9 +358,10 @@ test.describe('without JavaScript', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
       profile.name,
     )
-    await expect(
-      page.getByRole('link', { name: 'Email', exact: true }),
-    ).toHaveAttribute('href', `mailto:${profile.email}`)
+    await expect(page.getByRole('link', { name: /^Email\b/ })).toHaveAttribute(
+      'href',
+      `mailto:${profile.email}`,
+    )
     await expect(
       page.getByRole('button', { name: 'Copy email address' }),
     ).toBeHidden()
