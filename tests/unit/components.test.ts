@@ -67,12 +67,12 @@ describe('static components', () => {
     const control = parse(html)
     expect(html).not.toContain(atob(emailContact.encoded))
     expect(control.querySelector('a')?.hasAttribute('href')).toBe(false)
-    expect(control.querySelector('[data-email-address]')?.textContent).toContain(
-      'Email requires JavaScript.',
-    )
-    expect(control.querySelector('[data-email-address]')?.textContent).toContain(
-      'connect on LinkedIn instead.',
-    )
+    expect(
+      control.querySelector('[data-email-address]')?.textContent,
+    ).toContain('Email requires JavaScript.')
+    expect(
+      control.querySelector('[data-email-address]')?.textContent,
+    ).toContain('connect on LinkedIn instead.')
     expect(html).not.toContain(' at ')
     expect(html).not.toContain(' dot ')
     expect(control.querySelector('details')?.hasAttribute('open')).toBe(false)
