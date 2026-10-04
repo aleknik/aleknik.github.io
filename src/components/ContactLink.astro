@@ -1,0 +1,35 @@
+---
+import type { ContactLink } from '../data/site'
+import Icon from './Icon.astro'
+
+interface Props {
+  link: ContactLink
+}
+
+const { link } = Astro.props
+---
+
+<a
+  class="contact-link"
+  href={link.href}
+  target={link.external ? '_blank' : undefined}
+  rel={link.external ? 'noopener noreferrer' : undefined}
+>
+  {link.name}
+  {link.external && (
+    <>
+      <Icon name="arrow-up-right" size={13} />
+      <span class="sr-only"> (opens in a new tab)</span>
+    </>
+  )}
+</a>
+
+<style>
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 44px;
+    font-size: 0.9375rem;
+  }
+</style>

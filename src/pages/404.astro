@@ -6,49 +6,40 @@ import { profile } from '../data/site'
 
 <PageLayout title={`Page not found | ${profile.name}`} noindex>
   <main class="container not-found" id="main" tabindex="-1">
-    <p class="error-code" aria-hidden="true">
-      404
-    </p>
-    <p class="eyebrow">Page not found</p>
-    <h1>A little off the map.</h1>
-    <p class="description">
-      This page doesn't live here. The good news?
-      <br />
-      You're only one click away from home.
-    </p>
-    <a class="button" href="/">
-      Back to home <Icon name="arrow-right" size={18} />
-    </a>
+    <div>
+      <p class="error-code">404</p>
+      <h1>Page not found.</h1>
+      <p>This page doesn't exist.</p>
+      <a href="/">
+        Back to home <Icon name="arrow-right" size={16} />
+      </a>
+    </div>
   </main>
 </PageLayout>
 
 <style>
   .not-found {
-    min-height: calc(100svh - 200px);
+    display: flex;
+    flex: 1;
+    align-items: center;
     padding-block: 4rem;
-    text-align: center;
   }
 
   .error-code {
-    color: #6c8062;
-    font-size: clamp(7rem, 20vw, 12rem);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.07em;
-  }
-
-  .eyebrow {
-    margin-block: 1.5rem 0.75rem;
+    margin-bottom: 1rem;
     color: var(--muted);
   }
 
   h1 {
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    letter-spacing: -0.05em;
+    margin-bottom: 1.25rem;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
   }
 
-  .description {
-    margin-block: 1.5rem 2rem;
-    color: var(--muted);
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    margin-top: 1.5rem;
   }
 </style>

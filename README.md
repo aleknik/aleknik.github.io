@@ -3,6 +3,8 @@
 A small, fast personal site at [aleknik.com](https://aleknik.com/). Built with Astro,
 TypeScript, and scoped CSS. The full page is rendered at build time: there is no
 React runtime, hydration, canvas animation, analytics, or third-party asset request.
+The visible page is deliberately minimal: a name, one sentence, and three contact
+links. Typography uses system fonts, with a monochrome palette and no decorative cards.
 
 ## Development
 
@@ -28,7 +30,7 @@ npm run preview
 - [src/components/](src/components/): reusable, statically rendered UI components
   with scoped styles.
 - [src/layouts/PageLayout.astro](src/layouts/PageLayout.astro): document metadata,
-  local font preload, shared navigation, and offline registration.
+  skip navigation, the shared footer, and offline registration.
 - [src/styles/global.css](src/styles/global.css): design tokens, typography,
   shared controls, focus states, and reduced-motion support.
 - [src/lib/](src/lib/): typed icons and the progressively enhanced email-copy
@@ -49,9 +51,8 @@ the PNG/ICO icons and 1200 x 630 social preview. The social preview uses the pro
 data and its layout is defined in [scripts/generate-assets.ts](scripts/generate-assets.ts).
 Commit the generated assets together with their source changes.
 
-The variable Manrope font is bundled locally, preloaded, and limited to its Latin
-subset. Its [SIL Open Font License](public/manrope-license.txt) is copied from the
-Fontsource package by the asset generator and distributed with the site.
+No font files are downloaded. The page uses the visitor's system sans-serif font
+for text and Georgia (with a system serif fallback) for the name.
 
 ## Validation
 
@@ -70,12 +71,13 @@ reuse a development server or replace an existing preview (Astro's `--ignore-loc
 flag allows the test server to run alongside it). Tests cover Chromium, Firefox, WebKit, Android-sized
 Chrome, and iPhone-sized Safari:
 
-- Factual content, email/social destinations, and absence of page errors.
-- Keyboard/skip navigation, in-page links, reduced motion, 320-1440px layouts,
+- Factual, concise content, a monochrome palette, no font downloads, email/social
+  destinations, and absence of page errors.
+- Keyboard/skip navigation, existing section bookmarks, reduced motion, 320-1440px layouts,
   and 200% text sizing.
 - Clipboard success, permission denial, missing APIs, and Chromium's native clipboard.
 - Fully functional HTML without JavaScript.
-- Offline reloads, locally cached fonts, and the install manifest.
+- Offline reloads, cached styles, and the install manifest.
 - Canonical/social metadata, crawler files, image sizes, and 404 recovery.
 - Automated WCAG 2.2 AA checks on the homepage and 404 page using axe, including
   explicit label-in-name checks for screen readers and voice control.
@@ -104,12 +106,12 @@ The build enforces these gzip budgets:
 
 | Asset group        | Maximum |
 | ------------------ | ------: |
-| Homepage HTML      |   8 KiB |
-| Shared CSS         |   8 KiB |
-| Browser JavaScript |   4 KiB |
-| Local font         |  32 KiB |
+| Homepage HTML      |   4 KiB |
+| Shared CSS         |   2 KiB |
+| Browser JavaScript |   2 KiB |
+| Downloaded fonts   |   0 KiB |
 | Brand SVG          |   1 KiB |
-| Total page assets  |  52 KiB |
+| Total page assets  |   8 KiB |
 
 Offline/install assets and the social preview are not render-blocking page assets.
 The JavaScript budget includes inline scripts; the total counts them only once,

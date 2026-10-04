@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import { contactLinks, personSchema, profile } from '../../src/data/site'
-import { icons } from '../../src/lib/icons'
 
 describe('public profile content', () => {
   it('preserves the original identity and contact destinations', () => {
@@ -13,13 +12,14 @@ describe('public profile content', () => {
     ])
   })
 
-  it('provides a unique label and a supported icon for every contact', () => {
+  it('provides unique names and appropriate destinations without card copy', () => {
     expect(new Set(contactLinks.map(({ name }) => name)).size).toBe(
       contactLinks.length,
     )
     for (const link of contactLinks) {
-      expect(icons[link.icon].path.length).toBeGreaterThan(0)
-      expect(link.label.length).toBeGreaterThan(0)
+      expect(link.name.length).toBeGreaterThan(0)
+      expect(link).not.toHaveProperty('description')
+      expect(link).not.toHaveProperty('icon')
       expect(new URL(link.href).protocol).toBe(
         link.external ? 'https:' : 'mailto:',
       )

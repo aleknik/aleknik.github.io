@@ -1,7 +1,5 @@
 ---
-import fontUrl from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url'
 import { personSchema, profile } from '../data/site'
-import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 import '../styles/global.css'
 
@@ -21,7 +19,7 @@ const socialImage = new URL('social-card.png', profile.siteUrl).href
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={profile.description} />
-    <meta name="theme-color" content="#24483c" />
+    <meta name="theme-color" content="#222222" />
     <meta name="color-scheme" content="light" />
     <meta name="author" content={profile.name} />
     <meta name="apple-mobile-web-app-title" content={profile.handle} />
@@ -38,13 +36,6 @@ const socialImage = new URL('social-card.png', profile.siteUrl).href
       href="/icons/apple-touch-icon.png"
     />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link
-      rel="preload"
-      href={fontUrl}
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
-    />
     {noindex ? (
       <meta name="robots" content="noindex, follow" />
     ) : (
@@ -78,7 +69,6 @@ const socialImage = new URL('social-card.png', profile.siteUrl).href
     <a class="skip-link" href="#main">
       Skip to content
     </a>
-    <Header />
     <slot />
     <Footer />
   </body>

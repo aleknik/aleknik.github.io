@@ -1,30 +1,11 @@
-@font-face {
-  font-family: 'Manrope Variable';
-  font-style: normal;
-  font-weight: 200 800;
-  font-display: swap;
-  src: url('@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2')
-    format('woff2');
-}
-
 :root {
   color-scheme: light;
-  font-family: 'Manrope Variable', 'Segoe UI', sans-serif;
-  color: #222b27;
-  background: #f6f7f2;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #222;
+  background: #fafafa;
   -webkit-font-smoothing: antialiased;
-  --surface: #f6f7f2;
-  --surface-raised: #fff;
-  --ink: #222b27;
-  --muted: #60685f;
-  --line: #dce0d6;
-  --forest: #24483c;
-  --forest-hover: #17392e;
-  --lime: #d6efb5;
-  --radius: 1.25rem;
-  --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --ink: #222;
+  --muted: #686868;
 }
 
 *,
@@ -34,37 +15,27 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 2rem;
+  scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
   min-width: 280px;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
   line-height: 1.6;
 }
 
-body,
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button,
-input,
-textarea,
-select {
+button {
   font: inherit;
 }
 
 button,
 a {
   touch-action: manipulation;
-}
-
-button {
-  color: inherit;
 }
 
 button:not(:disabled) {
@@ -77,7 +48,12 @@ button:disabled {
 
 a {
   color: inherit;
-  text-decoration: none;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+a:hover {
+  color: var(--muted);
 }
 
 svg,
@@ -87,26 +63,24 @@ img {
 }
 
 p,
-h1,
-h2,
-h3 {
+h1 {
   margin: 0;
   overflow-wrap: break-word;
 }
 
-h1,
-h2,
-h3 {
-  line-height: 1.1;
+h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  line-height: 1.15;
 }
 
 ::selection {
-  color: var(--forest);
-  background: var(--lime);
+  color: #fff;
+  background: var(--ink);
 }
 
 :focus-visible {
-  outline: 3px solid var(--forest);
+  outline: 2px solid var(--ink);
   outline-offset: 5px;
 }
 
@@ -115,57 +89,23 @@ h3 {
 }
 
 .container {
-  width: min(1120px, calc(100% - 6rem));
+  width: min(42rem, calc(100% - 3rem));
   margin-inline: auto;
-}
-
-.eyebrow {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.25rem;
-  min-height: 52px;
-  padding: 0.875rem 1.375rem;
-  border: 1px solid var(--forest);
-  border-radius: 0.625rem;
-  background: var(--forest);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 650;
-  transition: background-color 160ms ease;
-}
-
-.button:hover {
-  background: var(--forest-hover);
-}
-
-.button svg {
-  width: 18px;
-  height: 18px;
 }
 
 .skip-link {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  z-index: 10;
+  z-index: 1;
   padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  background: var(--forest);
+  background: var(--ink);
   color: #fff;
   transform: translateY(-200%);
 }
 
 .skip-link:focus {
+  color: #fff;
   transform: translateY(0);
 }
 
@@ -179,29 +119,4 @@ h3 {
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
-}
-
-@media (max-width: 767px) {
-  .container {
-    width: calc(100% - 2.5rem);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-@media (forced-colors: active) {
-  .button {
-    border: 1px solid ButtonText;
-  }
 }

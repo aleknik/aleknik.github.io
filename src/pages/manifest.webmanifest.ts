@@ -12,8 +12,8 @@ export const GET: APIRoute = () =>
       start_url: '/',
       scope: '/',
       display: 'standalone',
-      theme_color: '#24483c',
-      background_color: '#f6f7f2',
+      theme_color: '#222222',
+      background_color: '#fafafa',
       icons: [
         {
           src: '/icons/android-chrome-192x192.png',

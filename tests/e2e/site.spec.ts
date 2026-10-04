@@ -22,15 +22,14 @@ test('renders the full profile and working destinations without runtime errors',
     profile.name,
   )
   await expect(page.getByRole('main')).toBeVisible()
-  await expect(page.getByRole('complementary')).toBeVisible()
-  await expect(page.locator('.section-description')).toHaveText(
-    'A few places to follow along. And one way to say hello.',
+  await expect(page.locator('#about p')).toHaveText(
+    'Software engineer in Belgrade, Serbia.',
   )
 
-  const contacts = page.getByRole('region', { name: 'Find me elsewhere' })
+  const contacts = page.getByRole('navigation', { name: 'Contact links' })
   for (const link of contactLinks) {
     const anchor = contacts.getByRole('link', {
-      name: `${link.name} ${link.description} ${link.label}${link.external ? ' (opens in a new tab)' : ''}`,
+      name: `${link.name}${link.external ? ' (opens in a new tab)' : ''}`,
       exact: true,
     })
     await expect(anchor).toHaveAttribute('href', link.href)
@@ -46,14 +45,29 @@ test('renders the full profile and working destinations without runtime errors',
   expect(errors).toEqual([])
   const origin = new URL(page.url()).origin
   expect(requests.every((url) => new URL(url).origin === origin)).toBe(true)
-  await expect(page.locator('canvas, astro-island')).toHaveCount(0)
+  expect(requests.some((url) => /\.(woff2?|ttf|otf)(?:\?|$)/i.test(url))).toBe(
+    false,
+  )
+  await expect(
+    page.locator('canvas, astro-island, aside, .contact-card, h2'),
+  ).toHaveCount(0)
+  await expect(page.locator('html')).toHaveCSS(
+    'background-color',
+    'rgb(250, 250, 250)',
+  )
+  await expect(page.locator('html')).toHaveCSS('color', 'rgb(34, 34, 34)')
+  const words = (await page.getByRole('main').innerText()).trim().split(/\s+/)
+  expect(
+    words.length,
+    'Keep the initial introduction and contacts concise',
+  ).toBeLessThanOrEqual(24)
   await page.screenshot({
     path: testInfo.outputPath('page.png'),
     fullPage: true,
   })
 })
 
-test('supports skip navigation, section links, and returning to the top', async ({
+test('supports keyboard navigation and existing section bookmarks', async ({
   page,
   browserName,
 }) => {
@@ -69,21 +83,35 @@ test('supports skip navigation, section links, and returning to the top', async 
   await page.keyboard.press('Enter')
   await expect(page.getByRole('main')).toBeFocused()
 
-  await page
-    .getByRole('navigation')
-    .getByRole('link', { name: "Let's connect" })
-    .click()
-  await expect(page).toHaveURL(/\/#connect$/)
-  await expect(
-    page.getByRole('heading', { name: 'Find me elsewhere' }),
-  ).toBeInViewport()
-  await page.getByRole('link', { name: 'Back to top' }).click()
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
+  await page.keyboard.press(nextLink)
   await expect(
     page.getByRole('link', {
-      name: `${profile.handle}. ${profile.name}, home`,
+      name: 'GitHub (opens in a new tab)',
+      exact: true,
     }),
+  ).toBeFocused()
+  await page.keyboard.press(nextLink)
+  await expect(
+    page.getByRole('link', {
+      name: 'LinkedIn (opens in a new tab)',
+      exact: true,
+    }),
+  ).toBeFocused()
+  await page.keyboard.press(nextLink)
+  await expect(
+    page.getByRole('link', { name: 'Email', exact: true }),
+  ).toBeFocused()
+  await page.keyboard.press(nextLink)
+  await expect(
+    page.getByRole('button', { name: 'Copy email address' }),
+  ).toBeFocused()
+
+  await page.goto('/#connect')
+  await expect(
+    page.getByRole('navigation', { name: 'Contact links' }),
   ).toBeInViewport()
+  await page.goto('/#about')
+  await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
 })
 
 test('fits narrow, tablet, and desktop screens and enlarged text', async ({
@@ -102,8 +130,11 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
       dimensions.content,
       `horizontal overflow at ${width}px`,
     ).toBeLessThanOrEqual(dimensions.viewport)
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-    await expect(page.getByRole('link', { name: /^Email\b/ })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
+    await expect(page.getByRole('link', { name: /^Email\b/ })).toBeInViewport()
+    expect(
+      await page.evaluate(() => document.documentElement.scrollHeight),
+    ).toBeLessThanOrEqual(900)
   }
 
   await page.setViewportSize({ width: 320, height: 900 })
@@ -123,7 +154,7 @@ test('honors reduced motion without running a background animation', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   await expect(page.locator('html')).toHaveCSS('scroll-behavior', 'auto')
-  await expect(page.locator('.contact-card').first()).toHaveCSS(
+  await expect(page.locator('.contact-link').first()).toHaveCSS(
     'transition-duration',
     '0s',
   )
@@ -144,7 +175,7 @@ test('copies email and announces success', async ({ page }) => {
   })
   await page.goto('/')
   await page.getByRole('button', { name: 'Copy email address' }).click()
-  await expect(page.getByRole('status')).toContainText('Email address copied.')
+  await expect(page.getByRole('status')).toHaveText('Copied.')
   await expect(page.locator('html')).toHaveAttribute(
     'data-copied-email',
     profile.email,
@@ -173,8 +204,8 @@ test('reports a denied clipboard permission and keeps the email link usable', as
   })
   await page.goto('/')
   await page.getByRole('button', { name: 'Copy email address' }).click()
-  await expect(page.getByRole('status')).toContainText(
-    'Could not copy. Select the address',
+  await expect(page.getByRole('status')).toHaveText(
+    `Copy failed. ${profile.email}`,
   )
   await expect(
     page.getByRole('button', { name: 'Copy email address' }),
@@ -201,7 +232,7 @@ test('provides a fallback when the Clipboard API is unavailable', async ({
   await expect(
     page.getByRole('button', { name: 'Copy email address' }),
   ).toBeHidden()
-  await expect(page.getByRole('status')).toContainText('select the address')
+  await expect(page.getByRole('status')).toHaveText(`Email: ${profile.email}`)
   await expect(page.getByRole('link', { name: /^Email\b/ })).toBeVisible()
 })
 
@@ -228,19 +259,14 @@ test('reloads the styled page and manifest offline after the first visit', async
     )
     await expect(page.locator('html')).toHaveCSS(
       'background-color',
-      'rgb(246, 247, 242)',
+      'rgb(250, 250, 250)',
     )
     await expect(page.getByRole('link', { name: /^Email\b/ })).toBeVisible()
     const manifest = await page.evaluate(async () =>
       (await fetch('/manifest.webmanifest')).json(),
     )
     expect(manifest.name).toBe(profile.name)
-    expect(
-      await page.evaluate(async () => {
-        await document.fonts.ready
-        return document.fonts.check('16px "Manrope Variable"')
-      }),
-    ).toBe(true)
+    expect(manifest.background_color).toBe('#fafafa')
     await expect(
       page.evaluate(() => fetch('/uncached-network-probe')),
     ).rejects.toThrow()
@@ -253,7 +279,7 @@ test('serves a real 404 with a route back home', async ({ page }) => {
   const response = await page.goto('/this-page-does-not-exist/')
   expect(response?.status()).toBe(404)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'A little off the map.',
+    'Page not found.',
   )
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
@@ -311,7 +337,16 @@ test('has valid canonical, social, crawler, and install metadata', async ({
     start_url: '/',
     scope: '/',
     display: 'standalone',
+    theme_color: '#222222',
+    background_color: '#fafafa',
   })
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+    'content',
+    manifest.theme_color,
+  )
+  const favicon = await request.get('/favicon.svg')
+  expect(await favicon.text()).toContain('fill="#222222"')
+  expect(await favicon.text()).toContain('fill="#fafafa"')
   for (const icon of manifest.icons) {
     const response = await request.get(icon.src)
     expect(response.ok()).toBe(true)
@@ -365,12 +400,8 @@ test.describe('without JavaScript', () => {
     await expect(
       page.getByRole('button', { name: 'Copy email address' }),
     ).toBeHidden()
-    await page
-      .getByRole('navigation')
-      .getByRole('link', { name: "Let's connect" })
-      .click()
     await expect(
-      page.getByRole('heading', { name: 'Find me elsewhere' }),
+      page.getByRole('navigation', { name: 'Contact links' }),
     ).toBeInViewport()
   })
 })

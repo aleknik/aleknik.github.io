@@ -19,8 +19,7 @@ export function enhanceCopyEmail(
   }
 
   if (!clipboard) {
-    status.textContent =
-      'You can select the address in the Email card to copy it.'
+    status.textContent = `Email: ${email}`
     return () => {}
   }
 
@@ -30,15 +29,14 @@ export function enhanceCopyEmail(
     if (button.disabled) return
 
     button.disabled = true
-    status.textContent = 'Copying email address...'
+    status.textContent = 'Copying...'
 
     try {
       await clipboard.writeText(email)
-      status.textContent = 'Email address copied. Say hello whenever you like.'
+      status.textContent = 'Copied.'
     } catch (error) {
       console.error('Could not copy the email address.', error)
-      status.textContent =
-        'Could not copy. Select the address in the Email card, or open your email app.'
+      status.textContent = `Copy failed. ${email}`
     } finally {
       button.disabled = false
     }

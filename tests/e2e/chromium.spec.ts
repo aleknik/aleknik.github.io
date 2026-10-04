@@ -11,7 +11,7 @@ test('copies to the real browser clipboard', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.goto('/')
   await page.getByRole('button', { name: 'Copy email address' }).click()
-  await expect(page.getByRole('status')).toContainText('Email address copied.')
+  await expect(page.getByRole('status')).toHaveText('Copied.')
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     profile.email,
   )

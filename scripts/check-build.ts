@@ -31,21 +31,21 @@ for (const [, attributes, content] of document.matchAll(
 }
 const javascript = externalJavascript + inlineJavascript
 const fonts = await compressedSize(
-  assets.filter((name) => name.endsWith('.woff2')),
+  assets.filter((name) => /\.(woff2?|ttf|otf)$/.test(name)),
 )
 const brand = gzipSync(
   await readFile(new URL('favicon.svg', output)),
 ).byteLength
 const budgets = [
-  { name: 'HTML', size: html, limit: 8 * 1024 },
-  { name: 'CSS', size: css, limit: 8 * 1024 },
-  { name: 'Browser JavaScript', size: javascript, limit: 4 * 1024 },
-  { name: 'Fonts', size: fonts, limit: 32 * 1024 },
+  { name: 'HTML', size: html, limit: 4 * 1024 },
+  { name: 'CSS', size: css, limit: 2 * 1024 },
+  { name: 'Browser JavaScript', size: javascript, limit: 2 * 1024 },
+  { name: 'Fonts', size: fonts, limit: 0 },
   { name: 'Brand SVG', size: brand, limit: 1024 },
   {
     name: 'Total page assets',
     size: html + css + externalJavascript + fonts + brand,
-    limit: 52 * 1024,
+    limit: 8 * 1024,
   },
 ]
 
@@ -66,7 +66,6 @@ for (const file of [
   'manifest.webmanifest',
   'sw.js',
   'social-card.png',
-  'manrope-license.txt',
 ]) {
   await readFile(new URL(file, output))
 }

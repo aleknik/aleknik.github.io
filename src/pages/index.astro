@@ -5,8 +5,23 @@ import ContactSection from '../components/ContactSection.astro'
 ---
 
 <PageLayout>
-  <main class="container" id="main" tabindex="-1">
-    <Hero />
-    <ContactSection />
+  <main class="container profile-page" id="main" tabindex="-1">
+    <div>
+      <Hero />
+      <ContactSection />
+    </div>
   </main>
 </PageLayout>
+
+<style>
+  .profile-page {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    padding-block: 6rem;
+  }
+
+  .profile-page > div {
+    width: 100%;
+  }
+</style>

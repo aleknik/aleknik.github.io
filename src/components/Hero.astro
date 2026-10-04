@@ -1,168 +1,23 @@
 ---
-import { contactLinks, profile } from '../data/site'
-import Icon from './Icon.astro'
-import LocationCard from './LocationCard.astro'
-
-const github = contactLinks[0]
+import { profile } from '../data/site'
 ---
 
-<section class="hero" id="about" aria-labelledby="intro-heading">
-  <div class="intro">
-    <p class="eyebrow intro-label">
-      <span aria-hidden="true"></span> Hello, world. I'm
-    </p>
-    <h1 id="intro-heading">
-      <span>{profile.firstName}</span>{' '}
-      <span>
-        {profile.lastName}
-        <span class="full-stop" aria-hidden="true">
-          .
-        </span>
-      </span>
-    </h1>
-    <p class="role">
-      {profile.role}.<br />
-      Based in{' '}
-      <span>
-        {profile.city}, {profile.country}.
-      </span>
-    </p>
-    <p class="description">
-      Welcome to my corner of the internet. A place for my code, my connections,
-      and whatever comes next.
-    </p>
-    <div class="hero-actions">
-      <a class="button" href={`mailto:${profile.email}`}>
-        Say hello <Icon name="arrow-up-right" size={18} />
-      </a>
-      <a
-        class="github-link"
-        href={github.href}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Explore my GitHub
-        <Icon name="arrow-up-right" size={16} />
-        <span class="sr-only">(opens in a new tab)</span>
-      </a>
-    </div>
-    <p class="intro-footnote eyebrow">A person behind the pixels.</p>
-  </div>
-  <LocationCard />
+<section id="about" aria-labelledby="intro-heading">
+  <h1 id="intro-heading">{profile.name}</h1>
+  <p>
+    {profile.role} in {profile.city}, {profile.country}.
+  </p>
 </section>
 
 <style>
-  .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-    align-items: center;
-    gap: clamp(2rem, 6vw, 5rem);
-    padding-block: 5.25rem 5rem;
-  }
-
-  .intro-label {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    margin-bottom: 1.5rem;
-    color: var(--muted);
-  }
-
-  .intro-label > span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--forest);
-  }
-
   h1 {
-    font-size: clamp(3.1rem, 6.9vw, 6rem);
-    font-weight: 650;
-    line-height: 1.04;
-    letter-spacing: -0.07em;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: -0.04em;
   }
 
-  h1 > span {
-    display: block;
-  }
-
-  .full-stop {
-    color: #557c50;
-  }
-
-  .role {
-    margin-top: 1.625rem;
-    color: var(--ink);
-    font-size: clamp(1.0625rem, 1.65vw, 1.25rem);
-    font-weight: 600;
-    line-height: 1.6;
-    letter-spacing: -0.025em;
-  }
-
-  .role span {
+  p {
+    margin-top: 1.25rem;
     color: var(--muted);
-    font-weight: 450;
-  }
-
-  .description {
-    max-width: 24.5rem;
-    margin-top: 1rem;
-    color: var(--muted);
-    font-size: 0.875rem;
-    line-height: 1.85;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1.75rem;
-    margin-top: 1.875rem;
-  }
-
-  .github-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    min-height: 44px;
-    color: var(--forest);
-    font-size: 0.8125rem;
-    font-weight: 650;
-  }
-
-  .github-link:hover {
-    text-decoration: underline;
-    text-underline-offset: 0.3rem;
-  }
-
-  .intro-footnote {
-    margin-top: 2rem;
-    color: var(--muted);
-    font-size: 0.5625rem;
-    letter-spacing: 0.09em;
-  }
-
-  @media (max-width: 767px) {
-    .hero {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 2.5rem;
-      padding-block: 3rem;
-    }
-
-    h1 {
-      font-size: clamp(3.15rem, 11vw, 5.5rem);
-    }
-
-    .intro-label {
-      margin-bottom: 1.25rem;
-    }
-
-    .description {
-      max-width: 30rem;
-    }
-
-    .intro-footnote {
-      display: none;
-    }
+    font-size: 1.0625rem;
   }
 </style>

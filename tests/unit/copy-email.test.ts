@@ -31,9 +31,7 @@ describe('email clipboard enhancement', () => {
     expect(button.hidden).toBe(false)
     button.click()
 
-    await vi.waitFor(() =>
-      expect(status.textContent).toContain('Email address copied.'),
-    )
+    await vi.waitFor(() => expect(status.textContent).toBe('Copied.'))
     expect(writeText).toHaveBeenCalledExactlyOnceWith(email)
     expect(button.disabled).toBe(false)
   })
@@ -45,9 +43,7 @@ describe('email clipboard enhancement', () => {
     enhanceCopyEmail(container)
     button.click()
 
-    await vi.waitFor(() =>
-      expect(status.textContent).toContain('Email address copied.'),
-    )
+    await vi.waitFor(() => expect(status.textContent).toBe('Copied.'))
     expect(writeText).toHaveBeenCalledWith(email)
   })
 
@@ -59,7 +55,7 @@ describe('email clipboard enhancement', () => {
     button.click()
 
     expect(button.disabled).toBe(true)
-    expect(status.textContent).toBe('Copying email address...')
+    expect(status.textContent).toBe('Copying...')
     button.dispatchEvent(new Event('click'))
     expect(writeText).toHaveBeenCalledTimes(1)
 
@@ -79,9 +75,9 @@ describe('email clipboard enhancement', () => {
     button.click()
 
     await vi.waitFor(() =>
-      expect(status.textContent).toContain('Could not copy.'),
+      expect(status.textContent).toBe(`Copy failed. ${email}`),
     )
-    expect(status.textContent).toContain('Select the address')
+    expect(status.textContent).toContain(email)
     expect(log).toHaveBeenCalledExactlyOnceWith(
       'Could not copy the email address.',
       error,
@@ -89,9 +85,7 @@ describe('email clipboard enhancement', () => {
     expect(button.disabled).toBe(false)
 
     button.click()
-    await vi.waitFor(() =>
-      expect(status.textContent).toContain('Email address copied.'),
-    )
+    await vi.waitFor(() => expect(status.textContent).toBe('Copied.'))
     expect(writeText).toHaveBeenCalledTimes(2)
   })
 
@@ -101,7 +95,7 @@ describe('email clipboard enhancement', () => {
     const cleanup = enhanceCopyEmail(container)
 
     expect(button.hidden).toBe(true)
-    expect(status.textContent).toContain('select the address')
+    expect(status.textContent).toBe(`Email: ${email}`)
     expect(cleanup).not.toThrow()
   })
 
