@@ -174,6 +174,7 @@ test('copies email and announces success', async ({ page }) => {
     })
   })
   await page.goto('/')
+  await expect(page.getByRole('status')).toHaveCount(1)
   await page.getByRole('button', { name: 'Copy email address' }).click()
   await expect(page.getByRole('status')).toHaveText('Copied.')
   await expect(page.locator('html')).toHaveAttribute(
