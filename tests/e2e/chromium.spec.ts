@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { profile } from '../../src/data/site'
+import { emailContact } from '../../src/data/site'
 
 declare global {
   interface Window {
@@ -10,10 +10,11 @@ declare global {
 test('copies to the real browser clipboard', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.goto('/')
-  await page.getByRole('button', { name: 'Copy email address' }).click()
+  await page.locator('summary').click()
+  await page.getByRole('button', { name: 'Copy address' }).click()
   await expect(page.getByRole('status')).toHaveText('Copied.')
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    profile.email,
+    Buffer.from(emailContact.encoded, 'base64').toString('utf8'),
   )
 })
 

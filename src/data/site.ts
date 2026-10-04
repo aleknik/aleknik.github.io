@@ -1,37 +1,41 @@
 export const profile = {
   name: 'Aleksandar Nikolic',
+  firstName: 'Aleksandar',
+  lastName: 'Nikolic',
   handle: 'aleknik',
   role: 'Software engineer',
   city: 'Belgrade',
   country: 'Serbia',
-  email: 'nikolic95@gmail.com',
   siteUrl: 'https://aleknik.com/',
   description: 'Aleksandar Nikolic - software engineer in Belgrade, Serbia.',
 } as const
 
 export interface ContactLink {
   name: string
+  label: string
   href: string
-  external: boolean
+  primary: boolean
 }
 
 export const contactLinks = [
   {
-    name: 'GitHub',
-    href: 'https://github.com/aleknik',
-    external: true,
-  },
-  {
     name: 'LinkedIn',
+    label: 'Connect on LinkedIn',
     href: 'https://www.linkedin.com/in/aleknik',
-    external: true,
+    primary: true,
   },
   {
-    name: 'Email',
-    href: `mailto:${profile.email}`,
-    external: false,
+    name: 'GitHub',
+    label: 'GitHub',
+    href: 'https://github.com/aleknik',
+    primary: false,
   },
 ] as const satisfies readonly ContactLink[]
+
+export const emailContact = {
+  encoded: 'bmlrb2xpYzk1QGdtYWlsLmNvbQ==',
+  readable: 'nikolic95 at gmail dot com',
+} as const
 
 export const personSchema = {
   '@context': 'https://schema.org',
@@ -41,10 +45,9 @@ export const personSchema = {
   url: profile.siteUrl,
   jobTitle: profile.role,
   description: profile.description,
-  email: `mailto:${profile.email}`,
   homeLocation: {
     '@type': 'Place',
     name: `${profile.city}, ${profile.country}`,
   },
-  sameAs: contactLinks.filter((link) => link.external).map((link) => link.href),
+  sameAs: contactLinks.map((link) => link.href),
 }

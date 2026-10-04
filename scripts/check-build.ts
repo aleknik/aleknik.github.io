@@ -1,5 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises'
 import { gzipSync } from 'node:zlib'
+import { join } from 'node:path'
+import { emailContact } from '../src/data/site.ts'
 
 const output = new URL('../dist/', import.meta.url)
 const assetDirectory = new URL('_astro/', output)
@@ -38,7 +40,7 @@ const brand = gzipSync(
 ).byteLength
 const budgets = [
   { name: 'HTML', size: html, limit: 4 * 1024 },
-  { name: 'CSS', size: css, limit: 2 * 1024 },
+  { name: 'CSS', size: css, limit: 4 * 1024 },
   { name: 'Browser JavaScript', size: javascript, limit: 2 * 1024 },
   { name: 'Fonts', size: fonts, limit: 0 },
   { name: 'Brand SVG', size: brand, limit: 1024 },
@@ -69,3 +71,19 @@ for (const file of [
 ]) {
   await readFile(new URL(file, output))
 }
+
+const email = Buffer.from(emailContact.encoded, 'base64').toString('utf8')
+const forbidden = [email, encodeURIComponent(email)]
+for (const file of await readdir(output, {
+  recursive: true,
+  withFileTypes: true,
+})) {
+  if (!file.isFile()) continue
+  const content = await readFile(join(file.parentPath, file.name))
+  if (forbidden.some((value) => content.includes(value))) {
+    throw new Error(
+      `Raw email address leaked into the published asset: ${file.name}`,
+    )
+  }
+}
+console.log('Email privacy: no raw or URL-encoded address in published assets.')

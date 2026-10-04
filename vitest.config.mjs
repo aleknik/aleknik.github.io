@@ -9,7 +9,7 @@ export default getViteConfig({
     coverage: {
       provider: 'v8',
       include: [
-        'src/lib/copy-email.ts',
+        'src/lib/email-contact.ts',
         'src/data/site.ts',
         'src/lib/icons.ts',
       ],

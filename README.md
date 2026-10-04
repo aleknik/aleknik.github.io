@@ -3,8 +3,8 @@
 A small, fast personal site at [aleknik.com](https://aleknik.com/). Built with Astro,
 TypeScript, and scoped CSS. The full page is rendered at build time: there is no
 React runtime, hydration, canvas animation, analytics, or third-party asset request.
-The visible page is deliberately minimal: a name, one sentence, and three contact
-links. Typography uses system fonts, with a monochrome palette and no decorative cards.
+The dark-blue profile keeps the copy short, uses a static geometric monogram, and
+makes LinkedIn the primary way to connect. GitHub and email are secondary.
 
 ## Development
 
@@ -33,16 +33,38 @@ npm run preview
   skip navigation, the shared footer, and offline registration.
 - [src/styles/global.css](src/styles/global.css): design tokens, typography,
   shared controls, focus states, and reduced-motion support.
-- [src/lib/](src/lib/): typed icons and the progressively enhanced email-copy
-  control. Clipboard failures are announced and logged; the email link always works.
+- [src/lib/](src/lib/): typed icons and progressively enhanced email disclosure.
+  Decode and clipboard failures are announced and logged.
 - [src/pages/](src/pages/): homepage, real 404 page, sitemap, robots file, and
   install manifest.
 - [scripts/](scripts/): asset generation, offline caching, and build-size checks.
 - [tests/](tests/): unit/component tests and production-browser tests.
 
-All content and navigation work with JavaScript disabled. External links announce
-that they open a new tab; email links open the visitor's email client. The copy
-control appears only when the Clipboard API is available.
+Content and social links work with JavaScript disabled. External links announce
+that they open a new tab. Email uses a native disclosure with a readable at/dot
+fallback; JavaScript enables click-to-email and clipboard copy after opening it.
+
+### Email harvesting deterrence
+
+The full address and `mailto` link are not rendered into initial HTML, metadata,
+structured data, or script bundles. An encoded payload is decoded only when a
+visitor opens **Email**. Without JavaScript, the written `at / dot` address is
+available inside the same disclosure. No extra service, tracking, or CAPTCHA is used.
+
+This is obfuscation, not encryption or spam prevention: a capable scraper can
+decode the payload or parse the written fallback. Previously public copies and
+Git history also remain public. A separate revocable email alias or a server-backed
+contact form with rate limits would offer stronger protection, but requires a
+mail/form service outside this GitHub Pages site.
+
+[Cloudflare's documentation](https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/)
+describes a similar approach and notes that scripts, metadata, and most attributes
+are not covered by its automatic obfuscation. This site does not depend on that
+proxy feature. The build checks every output asset for raw and URL-encoded address
+leaks, and browser tests verify there is no usable email link before disclosure.
+
+To change the address, update the `emailContact.encoded` base64 value and
+`emailContact.readable` fallback in [src/data/site.ts](src/data/site.ts) together.
 
 ### Branding
 
@@ -51,8 +73,8 @@ the PNG/ICO icons and 1200 x 630 social preview. The social preview uses the pro
 data and its layout is defined in [scripts/generate-assets.ts](scripts/generate-assets.ts).
 Commit the generated assets together with their source changes.
 
-No font files are downloaded. The page uses the visitor's system sans-serif font
-for text and Georgia (with a system serif fallback) for the name.
+No font files are downloaded. The page uses system sans-serif typography and a
+monospace role label. There is no animated background or rendering loop.
 
 ## Validation
 
@@ -71,11 +93,12 @@ reuse a development server or replace an existing preview (Astro's `--ignore-loc
 flag allows the test server to run alongside it). Tests cover Chromium, Firefox, WebKit, Android-sized
 Chrome, and iPhone-sized Safari:
 
-- Factual, concise content, a monochrome palette, no font downloads, email/social
-  destinations, and absence of page errors.
+- Factual, concise content, a dark-blue palette, LinkedIn priority, no font downloads,
+  contact destinations, and absence of page errors.
 - Keyboard/skip navigation, existing section bookmarks, reduced motion, 320-1440px layouts,
   and 200% text sizing.
-- Clipboard success, permission denial, missing APIs, and Chromium's native clipboard.
+- User-triggered email reveal, no raw address in initial output, written no-JS fallback,
+  clipboard success, permission denial, missing APIs, and Chromium's native clipboard.
 - Fully functional HTML without JavaScript.
 - Offline reloads, cached styles, and the install manifest.
 - Canonical/social metadata, crawler files, image sizes, and 404 recovery.
@@ -107,7 +130,7 @@ The build enforces these gzip budgets:
 | Asset group        | Maximum |
 | ------------------ | ------: |
 | Homepage HTML      |   4 KiB |
-| Shared CSS         |   2 KiB |
+| Shared CSS         |   4 KiB |
 | Browser JavaScript |   2 KiB |
 | Downloaded fonts   |   0 KiB |
 | Brand SVG          |   1 KiB |

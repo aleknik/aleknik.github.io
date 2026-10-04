@@ -1,7 +1,7 @@
 ---
-import { contactLinks, profile } from '../data/site'
+import { contactLinks } from '../data/site'
 import ContactLink from './ContactLink.astro'
-import CopyEmail from './CopyEmail.astro'
+import EmailContact from './EmailContact.astro'
 ---
 
 <nav id="connect" aria-label="Contact links">
@@ -9,22 +9,22 @@ import CopyEmail from './CopyEmail.astro'
     {contactLinks.map((link) => (
       <li>
         <ContactLink link={link} />
-        {!link.external && <CopyEmail email={profile.email} />}
       </li>
     ))}
   </ul>
+  <EmailContact />
 </nav>
 
 <style>
   nav {
-    margin-top: 1.75rem;
+    margin-top: 2rem;
   }
 
   ul {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem 1.75rem;
+    gap: 0.5rem 1.5rem;
     margin: 0;
     padding: 0;
     list-style: none;

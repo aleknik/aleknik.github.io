@@ -3,21 +3,42 @@ import { profile } from '../data/site'
 ---
 
 <section id="about" aria-labelledby="intro-heading">
-  <h1 id="intro-heading">{profile.name}</h1>
-  <p>
-    {profile.role} in {profile.city}, {profile.country}.
+  <p class="role">{profile.role}</p>
+  <h1 id="intro-heading">
+    <span>{profile.firstName}</span>{' '}
+    <span class="surname">{profile.lastName}</span>
+  </h1>
+  <p class="location">
+    {profile.city}, {profile.country}
   </p>
 </section>
 
 <style>
   h1 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    letter-spacing: -0.04em;
+    margin-block: 1.25rem;
+    font-size: clamp(2.5rem, 6.5vw, 4.625rem);
+    letter-spacing: -0.055em;
+    line-height: 1.06;
   }
 
-  p {
-    margin-top: 1.25rem;
+  h1 > span {
+    display: block;
+  }
+
+  .surname {
+    color: var(--blue);
+  }
+
+  .role {
+    color: var(--blue);
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .location {
     color: var(--muted);
-    font-size: 1.0625rem;
+    font-size: 0.9375rem;
   }
 </style>

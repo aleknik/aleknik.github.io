@@ -1,0 +1,27 @@
+---
+import { profile } from '../data/site'
+---
+
+<header class="container">
+  <a href="/" aria-label={`${profile.handle}, home`}>
+    <img src="/favicon.svg" alt="" width="32" height="32" />
+    <span>{profile.handle}</span>
+  </a>
+</header>
+
+<style>
+  header {
+    padding-top: 2rem;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+</style>

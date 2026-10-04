@@ -1,7 +1,32 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { contactLinks, profile } from '../../src/data/site'
+import { contactLinks, emailContact, profile } from '../../src/data/site'
 import { createOfflineOrigin } from './helpers/offline-origin'
+
+const email = Buffer.from(emailContact.encoded, 'base64').toString('utf8')
+
+test('keeps email out of initial markup and reveals it only on request', async ({
+  page,
+  request,
+}) => {
+  const source = await request.get('/')
+  const html = await source.text()
+  expect(html).not.toContain(email)
+  expect(html).not.toContain(encodeURIComponent(email))
+  await page.goto('/')
+  await expect(page.locator('details')).not.toHaveAttribute('open')
+  await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0)
+  expect(await page.content()).not.toContain(email)
+  await page.locator('summary').click()
+  await expect(page.locator('[data-email-address]')).toHaveText(email)
+  await expect(
+    page.getByRole('link', { name: 'Open email app' }),
+  ).toHaveAttribute('href', `mailto:${email}`)
+  await page.locator('summary').click()
+  await expect(page.locator('[data-email-address]')).toBeHidden()
+  await page.locator('summary').click()
+  await expect(page.locator('[data-email-address]')).toHaveText(email)
+})
 
 test('renders the full profile and working destinations without runtime errors', async ({
   page,
@@ -22,24 +47,30 @@ test('renders the full profile and working destinations without runtime errors',
     profile.name,
   )
   await expect(page.getByRole('main')).toBeVisible()
-  await expect(page.locator('#about p')).toHaveText(
-    'Software engineer in Belgrade, Serbia.',
-  )
+  await expect(page.locator('#about .role')).toHaveText('Software engineer')
+  await expect(page.locator('#about .location')).toHaveText('Belgrade, Serbia')
 
   const contacts = page.getByRole('navigation', { name: 'Contact links' })
   for (const link of contactLinks) {
     const anchor = contacts.getByRole('link', {
-      name: `${link.name}${link.external ? ' (opens in a new tab)' : ''}`,
+      name: `${link.label} (opens in a new tab)`,
       exact: true,
     })
     await expect(anchor).toHaveAttribute('href', link.href)
-    if (link.external) {
-      await expect(anchor).toHaveAttribute('target', '_blank')
-      await expect(anchor).toHaveAttribute('rel', 'noopener noreferrer')
-    } else {
-      await expect(anchor).not.toHaveAttribute('target')
-    }
+    await expect(anchor).toHaveAttribute('target', '_blank')
+    await expect(anchor).toHaveAttribute('rel', 'noopener noreferrer')
   }
+  await expect(contacts.getByRole('link').first()).toHaveAttribute(
+    'href',
+    contactLinks[0].href,
+  )
+  await expect(contacts.locator('.primary')).toHaveAccessibleName(
+    'Connect on LinkedIn (opens in a new tab)',
+  )
+  await expect(contacts.locator('.primary')).toHaveCSS(
+    'background-color',
+    'rgb(33, 96, 207)',
+  )
 
   await page.evaluate(() => document.fonts.ready)
   expect(errors).toEqual([])
@@ -53,9 +84,10 @@ test('renders the full profile and working destinations without runtime errors',
   ).toHaveCount(0)
   await expect(page.locator('html')).toHaveCSS(
     'background-color',
-    'rgb(250, 250, 250)',
+    'rgb(8, 14, 24)',
   )
-  await expect(page.locator('html')).toHaveCSS('color', 'rgb(34, 34, 34)')
+  await expect(page.locator('html')).toHaveCSS('color', 'rgb(237, 242, 250)')
+  await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark')
   const words = (await page.getByRole('main').innerText()).trim().split(/\s+/)
   expect(
     words.length,
@@ -86,25 +118,23 @@ test('supports keyboard navigation and existing section bookmarks', async ({
   await page.keyboard.press(nextLink)
   await expect(
     page.getByRole('link', {
-      name: 'GitHub (opens in a new tab)',
+      name: 'Connect on LinkedIn (opens in a new tab)',
       exact: true,
     }),
   ).toBeFocused()
   await page.keyboard.press(nextLink)
   await expect(
     page.getByRole('link', {
-      name: 'LinkedIn (opens in a new tab)',
+      name: 'GitHub (opens in a new tab)',
       exact: true,
     }),
   ).toBeFocused()
   await page.keyboard.press(nextLink)
-  await expect(
-    page.getByRole('link', { name: 'Email', exact: true }),
-  ).toBeFocused()
+  await expect(page.locator('summary')).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('[data-email-address]')).toHaveText(email)
   await page.keyboard.press(nextLink)
-  await expect(
-    page.getByRole('button', { name: 'Copy email address' }),
-  ).toBeFocused()
+  await expect(page.getByRole('link', { name: 'Open email app' })).toBeFocused()
 
   await page.goto('/#connect')
   await expect(
@@ -131,7 +161,7 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
       `horizontal overflow at ${width}px`,
     ).toBeLessThanOrEqual(dimensions.viewport)
     await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
-    await expect(page.getByRole('link', { name: /^Email\b/ })).toBeInViewport()
+    await expect(page.locator('summary')).toBeInViewport()
     expect(
       await page.evaluate(() => document.documentElement.scrollHeight),
     ).toBeLessThanOrEqual(900)
@@ -174,16 +204,12 @@ test('copies email and announces success', async ({ page }) => {
     })
   })
   await page.goto('/')
+  await page.locator('summary').click()
   await expect(page.getByRole('status')).toHaveCount(1)
-  await page.getByRole('button', { name: 'Copy email address' }).click()
+  await page.getByRole('button', { name: 'Copy address' }).click()
   await expect(page.getByRole('status')).toHaveText('Copied.')
-  await expect(page.locator('html')).toHaveAttribute(
-    'data-copied-email',
-    profile.email,
-  )
-  await expect(
-    page.getByRole('button', { name: 'Copy email address' }),
-  ).toBeEnabled()
+  await expect(page.locator('html')).toHaveAttribute('data-copied-email', email)
+  await expect(page.getByRole('button', { name: 'Copy address' })).toBeEnabled()
 })
 
 test('reports a denied clipboard permission and keeps the email link usable', async ({
@@ -204,17 +230,15 @@ test('reports a denied clipboard permission and keeps the email link usable', as
     })
   })
   await page.goto('/')
-  await page.getByRole('button', { name: 'Copy email address' }).click()
+  await page.locator('summary').click()
+  await page.getByRole('button', { name: 'Copy address' }).click()
   await expect(page.getByRole('status')).toHaveText(
-    `Copy failed. ${profile.email}`,
+    'Copy failed. Select the address above instead.',
   )
+  await expect(page.getByRole('button', { name: 'Copy address' })).toBeEnabled()
   await expect(
-    page.getByRole('button', { name: 'Copy email address' }),
-  ).toBeEnabled()
-  await expect(page.getByRole('link', { name: /^Email\b/ })).toHaveAttribute(
-    'href',
-    `mailto:${profile.email}`,
-  )
+    page.getByRole('link', { name: 'Open email app' }),
+  ).toHaveAttribute('href', `mailto:${email}`)
   expect(
     errors.some((error) => error.includes('Could not copy the email address.')),
   ).toBe(true)
@@ -230,11 +254,12 @@ test('provides a fallback when the Clipboard API is unavailable', async ({
     })
   })
   await page.goto('/')
+  await page.locator('summary').click()
+  await expect(page.getByRole('button', { name: 'Copy address' })).toBeHidden()
+  await expect(page.locator('[data-email-address]')).toHaveText(email)
   await expect(
-    page.getByRole('button', { name: 'Copy email address' }),
-  ).toBeHidden()
-  await expect(page.getByRole('status')).toHaveText(`Email: ${profile.email}`)
-  await expect(page.getByRole('link', { name: /^Email\b/ })).toBeVisible()
+    page.getByRole('link', { name: 'Open email app' }),
+  ).toHaveAttribute('href', `mailto:${email}`)
 })
 
 test('reloads the styled page and manifest offline after the first visit', async ({
@@ -260,14 +285,17 @@ test('reloads the styled page and manifest offline after the first visit', async
     )
     await expect(page.locator('html')).toHaveCSS(
       'background-color',
-      'rgb(250, 250, 250)',
+      'rgb(8, 14, 24)',
     )
-    await expect(page.getByRole('link', { name: /^Email\b/ })).toBeVisible()
+    await page.locator('summary').click()
+    await expect(
+      page.getByRole('link', { name: 'Open email app' }),
+    ).toHaveAttribute('href', `mailto:${email}`)
     const manifest = await page.evaluate(async () =>
       (await fetch('/manifest.webmanifest')).json(),
     )
     expect(manifest.name).toBe(profile.name)
-    expect(manifest.background_color).toBe('#fafafa')
+    expect(manifest.background_color).toBe('#080e18')
     await expect(
       page.evaluate(() => fetch('/uncached-network-probe')),
     ).rejects.toThrow()
@@ -316,9 +344,10 @@ test('has valid canonical, social, crawler, and install metadata', async ({
   expect(schema['@type']).toBe('Person')
   expect(schema.name).toBe(profile.name)
   expect(schema.sameAs).toEqual([
-    'https://github.com/aleknik',
     'https://www.linkedin.com/in/aleknik',
+    'https://github.com/aleknik',
   ])
+  expect(schema).not.toHaveProperty('email')
 
   const robots = await request.get('/robots.txt')
   expect(robots.ok()).toBe(true)
@@ -338,16 +367,16 @@ test('has valid canonical, social, crawler, and install metadata', async ({
     start_url: '/',
     scope: '/',
     display: 'standalone',
-    theme_color: '#222222',
-    background_color: '#fafafa',
+    theme_color: '#080e18',
+    background_color: '#080e18',
   })
   await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
     'content',
     manifest.theme_color,
   )
   const favicon = await request.get('/favicon.svg')
-  expect(await favicon.text()).toContain('fill="#222222"')
-  expect(await favicon.text()).toContain('fill="#fafafa"')
+  expect(await favicon.text()).toContain('fill="#101e34"')
+  expect(await favicon.text()).toContain('fill="#87b4ff"')
   for (const icon of manifest.icons) {
     const response = await request.get(icon.src)
     expect(response.ok()).toBe(true)
@@ -381,6 +410,11 @@ test('passes WCAG 2.2 AA automated checks on both pages', async ({ page }) => {
     expect(results.violations, `accessibility violations on ${path}`).toEqual(
       [],
     )
+    if (path === '/') {
+      await page.locator('summary').click()
+      const expanded = await new AxeBuilder({ page }).analyze()
+      expect(expanded.violations, 'Expanded email accessibility').toEqual([])
+    }
   }
 })
 
@@ -394,12 +428,13 @@ test.describe('without JavaScript', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
       profile.name,
     )
-    await expect(page.getByRole('link', { name: /^Email\b/ })).toHaveAttribute(
-      'href',
-      `mailto:${profile.email}`,
+    await page.locator('summary').click()
+    await expect(page.locator('[data-email-address]')).toHaveText(
+      emailContact.readable,
     )
+    await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0)
     await expect(
-      page.getByRole('button', { name: 'Copy email address' }),
+      page.getByRole('button', { name: 'Copy address' }),
     ).toBeHidden()
     await expect(
       page.getByRole('navigation', { name: 'Contact links' }),

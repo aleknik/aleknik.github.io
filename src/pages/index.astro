@@ -2,13 +2,17 @@
 import PageLayout from '../layouts/PageLayout.astro'
 import Hero from '../components/Hero.astro'
 import ContactSection from '../components/ContactSection.astro'
+import Monogram from '../components/Monogram.astro'
 ---
 
 <PageLayout>
   <main class="container profile-page" id="main" tabindex="-1">
-    <div>
-      <Hero />
-      <ContactSection />
+    <div class="profile-card">
+      <div class="profile-content">
+        <Hero />
+        <ContactSection />
+      </div>
+      <Monogram />
     </div>
   </main>
 </PageLayout>
@@ -18,10 +22,34 @@ import ContactSection from '../components/ContactSection.astro'
     display: flex;
     flex: 1;
     align-items: center;
-    padding-block: 6rem;
+    padding-block: 3rem;
   }
 
-  .profile-page > div {
+  .profile-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 2rem;
     width: 100%;
+    padding: clamp(20px, 5vw, 56px);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    background: linear-gradient(120deg, #101b2c, #0b1321);
+    box-shadow: 0 28px 80px #0003;
+  }
+
+  .profile-content {
+    min-width: 0;
+  }
+
+  @media (max-width: 767px) {
+    .profile-card {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .profile-page {
+      padding-block: 2rem;
+    }
   }
 </style>

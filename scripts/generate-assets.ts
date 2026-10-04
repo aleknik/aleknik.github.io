@@ -17,7 +17,7 @@ await Promise.all(
   icons.map(async ([name, size]) => {
     const image = await sharp(mark)
       .resize(size, size)
-      .flatten({ background: '#222222' })
+      .flatten({ background: '#101e34' })
       .png()
       .toBuffer()
     await writeFile(new URL(`icons/${name}`, publicDirectory), image)
@@ -40,11 +40,17 @@ await writeFile(
 )
 
 const socialCard = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#fafafa"/>
-  <text x="96" y="280" font-family="Georgia, Times New Roman, serif" font-size="76" fill="#222222">${profile.name}</text>
-  <g font-family="Arial, Helvetica, sans-serif" fill="#686868">
-    <text x="100" y="346" font-size="28">${profile.role} in ${profile.city}, ${profile.country}.</text>
-    <text x="100" y="542" font-size="20">aleknik.com</text>
+  <rect width="1200" height="630" fill="#080e18"/>
+  <rect x="48" y="48" width="1104" height="534" rx="24" fill="#101b2c" stroke="#243249"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="100" y="143" font-size="20" fill="#87b4ff">${profile.role}</text>
+    <text x="94" y="275" font-size="88" font-weight="600" fill="#edf2fa">${profile.firstName}</text>
+    <text x="94" y="370" font-size="88" font-weight="600" fill="#87b4ff">${profile.lastName}</text>
+    <text x="100" y="435" font-size="24" fill="#a0aec3">${profile.city}, ${profile.country}</text>
+    <text x="100" y="525" font-size="20" fill="#a0aec3">aleknik.com</text>
+  </g>
+  <g transform="translate(710 145) scale(6)">
+    <path d="M32 16 17 48h16l-3-7h-3l5-11 8 18h8L34 16Z" fill="#87b4ff"/>
   </g>
 </svg>`
 
