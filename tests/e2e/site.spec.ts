@@ -42,10 +42,11 @@ test('renders the full profile and working destinations without runtime errors',
 
   const response = await page.goto('/')
   expect(response?.status()).toBe(200)
-  await expect(page).toHaveTitle('Aleksandar Nikolic | Software Engineer')
+  await expect(page).toHaveTitle('Aleksandar Nikolić | Software Engineer')
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
     profile.name,
   )
+  await expect(page.locator('.surname')).toHaveText('Nikolić')
   await expect(page.getByRole('main')).toBeVisible()
   await expect(page.locator('#about .role')).toHaveText('Software engineer')
   await expect(page.locator('#about .location')).toHaveText('Belgrade, Serbia')
@@ -307,6 +308,7 @@ test('reloads the styled page and manifest offline after the first visit', async
 test('serves a real 404 with a route back home', async ({ page }) => {
   const response = await page.goto('/this-page-does-not-exist/')
   expect(response?.status()).toBe(404)
+  await expect(page).toHaveTitle(`Page not found | ${profile.name}`)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'Page not found.',
   )
@@ -325,6 +327,27 @@ test('has valid canonical, social, crawler, and install metadata', async ({
   request,
 }) => {
   await page.goto('/')
+  await expect(page.locator('meta[name="author"]')).toHaveAttribute(
+    'content',
+    profile.name,
+  )
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    profile.description,
+  )
+  for (const selector of [
+    'meta[property="og:title"]',
+    'meta[name="twitter:title"]',
+  ]) {
+    await expect(page.locator(selector)).toHaveAttribute(
+      'content',
+      `${profile.name} | Software Engineer`,
+    )
+  }
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+    'content',
+    `${profile.name}, software engineer based in ${profile.city}, ${profile.country}`,
+  )
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
     profile.siteUrl,

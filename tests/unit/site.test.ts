@@ -7,8 +7,11 @@ import {
 } from '../../src/data/site'
 
 describe('public profile content', () => {
-  it('preserves the original identity and contact destinations', () => {
-    expect(profile.name).toBe('Aleksandar Nikolic')
+  it('preserves the accented name and contact destinations', () => {
+    expect(profile.name).toBe('Aleksandar Nikolić')
+    expect(profile.lastName).toBe('Nikolić')
+    expect(`${profile.firstName} ${profile.lastName}`).toBe(profile.name)
+    expect(profile.description).toContain(profile.name)
     expect(`${profile.city}, ${profile.country}`).toBe('Belgrade, Serbia')
     expect(contactLinks.map(({ href }) => href)).toEqual([
       'https://www.linkedin.com/in/aleknik',

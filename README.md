@@ -1,4 +1,4 @@
-# Aleksandar Nikolic
+# Aleksandar Nikolić
 
 A small, fast personal site at [aleknik.com](https://aleknik.com/). Built with Astro,
 TypeScript, and scoped CSS. The full page is rendered at build time: there is no

@@ -1,13 +1,13 @@
 export const profile = {
-  name: 'Aleksandar Nikolic',
+  name: 'Aleksandar Nikolić',
   firstName: 'Aleksandar',
-  lastName: 'Nikolic',
+  lastName: 'Nikolić',
   handle: 'aleknik',
   role: 'Software engineer',
   city: 'Belgrade',
   country: 'Serbia',
   siteUrl: 'https://aleknik.com/',
-  description: 'Aleksandar Nikolic - software engineer in Belgrade, Serbia.',
+  description: 'Aleksandar Nikolić - software engineer in Belgrade, Serbia.',
 } as const
 
 export interface ContactLink {
