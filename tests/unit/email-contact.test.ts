@@ -8,7 +8,7 @@ function createControl() {
   const details = document.createElement('details')
   details.dataset['email'] = btoa(email)
   details.innerHTML =
-    '<summary>Email</summary><p data-email-address>hello at example dot com</p><a data-email-link hidden>Open email app</a><button data-email-copy hidden>Copy address</button><p role="status"></p>'
+    '<summary>Email</summary><p data-email-address>Email requires JavaScript. Please connect on LinkedIn instead.</p><a data-email-link hidden>Open email app</a><button data-email-copy hidden>Copy address</button><p role="status"></p>'
   document.body.append(details)
   const address = details.querySelector('p')!
   const link = details.querySelector('a')!
@@ -121,7 +121,7 @@ describe('progressively enhanced email contact', () => {
       open()
       expect(link.hasAttribute('href')).toBe(false)
       expect(address.textContent).toBe('hello at example dot com')
-      expect(status.textContent).toContain('connect on LinkedIn')
+      expect(status.textContent).toBe('Please connect on LinkedIn instead.')
       expect(log).toHaveBeenCalled()
     },
   )

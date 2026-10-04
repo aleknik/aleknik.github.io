@@ -13,6 +13,8 @@ test('keeps email out of initial markup and reveals it only on request', async (
   const html = await source.text()
   expect(html).not.toContain(email)
   expect(html).not.toContain(encodeURIComponent(email))
+  expect(html).not.toContain(' at ')
+  expect(html).not.toContain(' dot ')
   await page.goto('/')
   await expect(page.locator('details')).not.toHaveAttribute('open')
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0)
@@ -482,8 +484,11 @@ test.describe('without JavaScript', () => {
       profile.name,
     )
     await page.locator('summary').click()
-    await expect(page.locator('[data-email-address]')).toHaveText(
-      emailContact.readable,
+    await expect(page.locator('[data-email-address]')).toContainText(
+      'Email requires JavaScript.',
+    )
+    await expect(page.locator('[data-email-address]')).toContainText(
+      'connect on LinkedIn instead.',
     )
     await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0)
     await expect(

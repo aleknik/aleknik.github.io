@@ -38,8 +38,7 @@ export function enhanceEmailContact(
       button.hidden = !clipboard
     } catch (error) {
       console.error('Could not reveal the email address.', error)
-      status.textContent =
-        'Please use the written address or connect on LinkedIn.'
+      status.textContent = 'Please connect on LinkedIn instead.'
     }
   }
 

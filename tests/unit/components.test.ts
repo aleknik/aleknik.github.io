@@ -61,15 +61,20 @@ describe('static components', () => {
     expect(content.querySelectorAll('h2, h3')).toHaveLength(0)
   })
 
-  it('never renders a raw address or mailto and provides an at/dot fallback', async () => {
+  it('keeps the address private in static markup and provides a no-JavaScript fallback', async () => {
     const container = await AstroContainer.create()
     const html = await container.renderToString(EmailContact)
     const control = parse(html)
     expect(html).not.toContain(atob(emailContact.encoded))
     expect(control.querySelector('a')?.hasAttribute('href')).toBe(false)
-    expect(control.querySelector('[data-email-address]')?.textContent).toBe(
-      emailContact.readable,
+    expect(control.querySelector('[data-email-address]')?.textContent).toContain(
+      'Email requires JavaScript.',
     )
+    expect(control.querySelector('[data-email-address]')?.textContent).toContain(
+      'connect on LinkedIn instead.',
+    )
+    expect(html).not.toContain(' at ')
+    expect(html).not.toContain(' dot ')
     expect(control.querySelector('details')?.hasAttribute('open')).toBe(false)
     expect(control.querySelector('button')?.hasAttribute('hidden')).toBe(true)
     expect(control.querySelector('button')?.getAttribute('type')).toBe('button')

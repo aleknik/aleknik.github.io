@@ -43,14 +43,16 @@ npm run preview
 
 Content and social links work with JavaScript disabled. External links announce
 that they open a new tab. Email uses a native disclosure with a readable at/dot
-fallback; JavaScript enables click-to-email and clipboard copy after opening it.
+fallback; JavaScript reveals the address and enables click-to-email and clipboard
+copy after opening it.
 
 ### Email harvesting deterrence
 
 The full address and `mailto` link are not rendered into initial HTML, metadata,
 structured data, or script bundles. An encoded payload is decoded only when a
-visitor opens **Email**. Without JavaScript, the written `at / dot` address is
-available inside the same disclosure. No extra service, tracking, or CAPTCHA is used.
+visitor opens **Email me**. Without JavaScript, the disclosure explains that email
+requires JavaScript and directs visitors to LinkedIn. No extra service, tracking,
+or CAPTCHA is used.
 
 This is obfuscation, not encryption or spam prevention: a capable scraper can
 decode the payload or parse the written fallback. Previously public copies and
@@ -64,8 +66,8 @@ are not covered by its automatic obfuscation. This site does not depend on that
 proxy feature. The build checks every output asset for raw and URL-encoded address
 leaks, and browser tests verify there is no usable email link before disclosure.
 
-To change the address, update the `emailContact.encoded` base64 value and
-`emailContact.readable` fallback in [src/data/site.ts](src/data/site.ts) together.
+To change the address, update the `emailContact.encoded` base64 value in
+[src/data/site.ts](src/data/site.ts).
 
 ### Branding
 
