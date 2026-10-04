@@ -1,0 +1,96 @@
+---
+import { contactLinks, profile } from '../data/site'
+import ContactCard from './ContactCard.astro'
+import CopyEmail from './CopyEmail.astro'
+---
+
+<section class="contact-section" id="connect" aria-labelledby="connect-heading">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Code. Conversation. Connection.</p>
+      <h2 id="connect-heading">
+        Find me elsewhere<span aria-hidden="true">.</span>
+      </h2>
+    </div>
+    <p class="section-description">
+      A few places to follow along.
+      <br /> And one way to say hello.
+    </p>
+  </div>
+  <ul class="contact-grid">
+    {contactLinks.map((link, index) => (
+      <li>
+        <ContactCard link={link} index={index} />
+      </li>
+    ))}
+  </ul>
+  <CopyEmail email={profile.email} />
+</section>
+
+<style>
+  .contact-section {
+    padding-block: 3rem 3.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .eyebrow {
+    margin-bottom: 0.75rem;
+    color: var(--muted);
+    font-size: 0.5625rem;
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 3.3vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+  }
+
+  h2 span {
+    color: #557c50;
+  }
+
+  .section-description {
+    color: var(--muted);
+    font-size: 0.75rem;
+    line-height: 1.8;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (max-width: 767px) {
+    .contact-section {
+      padding-block: 2.5rem;
+    }
+
+    .section-heading {
+      display: block;
+    }
+
+    .section-description {
+      margin-top: 1rem;
+    }
+
+    .section-description br {
+      display: none;
+    }
+
+    .contact-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

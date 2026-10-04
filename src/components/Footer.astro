@@ -1,0 +1,54 @@
+---
+import { profile } from '../data/site'
+import Icon from './Icon.astro'
+---
+
+<footer class="site-footer container">
+  <p>
+    &copy; {new Date().getFullYear()} {profile.name}
+  </p>
+  <p class="footer-note">A small site. A personal touch.</p>
+  <a href="#top">
+    Back to top <Icon name="arrow-up" size={14} />
+  </a>
+</footer>
+
+<style>
+  .site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding-block: 1.5rem;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.6875rem;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    color: var(--forest);
+    font-weight: 600;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25rem;
+  }
+
+  @media (max-width: 767px) {
+    .site-footer {
+      flex-wrap: wrap;
+      padding-block: 1rem;
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    .footer-note {
+      display: none;
+    }
+  }
+</style>

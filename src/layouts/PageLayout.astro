@@ -1,0 +1,101 @@
+---
+import fontUrl from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url'
+import { personSchema, profile } from '../data/site'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import '../styles/global.css'
+
+interface Props {
+  title?: string
+  noindex?: boolean
+}
+
+const { title = `${profile.name} | Software Engineer`, noindex = false } =
+  Astro.props
+const socialImage = new URL('social-card.png', profile.siteUrl).href
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={profile.description} />
+    <meta name="theme-color" content="#24483c" />
+    <meta name="color-scheme" content="light" />
+    <meta name="author" content={profile.name} />
+    <meta name="apple-mobile-web-app-title" content={profile.handle} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/icons/favicon-32x32.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/icons/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link
+      rel="preload"
+      href={fontUrl}
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    {noindex ? (
+      <meta name="robots" content="noindex, follow" />
+    ) : (
+      <link rel="canonical" href={profile.siteUrl} />
+    )}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={profile.description} />
+    <meta property="og:url" content={profile.siteUrl} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content={`${profile.name}, software engineer based in ${profile.city}, ${profile.country}`}
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={profile.description} />
+    <meta name="twitter:image" content={socialImage} />
+    <title>{title}</title>
+    {!noindex && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(personSchema).replaceAll('<', '\\u003c')}
+      />
+    )}
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <Header />
+    <slot />
+    <Footer />
+  </body>
+</html>
+
+<script>
+  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+    const register = () => {
+      navigator.serviceWorker.register('/sw.js').catch((error: unknown) => {
+        console.error('Offline support could not be enabled.', error)
+      })
+    }
+
+    if (document.readyState === 'complete') {
+      register()
+    } else {
+      window.addEventListener('load', register, { once: true })
+    }
+  }
+</script>
