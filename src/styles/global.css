@@ -8,7 +8,8 @@
   --muted: #a0aec3;
   --blue: #87b4ff;
   --line: #243249;
-  --content-inset: clamp(20px, 5vw, 56px);
+  --page-gutter: clamp(20px, 6.25vw, 44px);
+  --content-inset: clamp(20px, 6.25vw, 44px);
   --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 }
 
@@ -31,7 +32,9 @@ body {
   min-height: 100svh;
   margin: 0;
   line-height: 1.6;
-  background: radial-gradient(ellipse at 85% 10%, #15284b66, transparent 55%);
+  background:
+    radial-gradient(ellipse at 80% 12%, #10294a80, transparent 48%),
+    linear-gradient(145deg, #080e18, #07101d 65%, #080e18);
 }
 
 button {

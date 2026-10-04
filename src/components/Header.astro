@@ -2,26 +2,49 @@
 import { profile } from '../data/site'
 ---
 
-<header class="container content-aligned">
-  <a href="/" aria-label={`${profile.handle}, home`}>
-    <img src="/favicon.svg" alt="" width="32" height="32" />
-    <span>{profile.handle}</span>
-  </a>
+<header>
+  <div class="container content-aligned header-content">
+    <a href="/" aria-label={`${profile.handle}, home`}>
+      <img src="/favicon.svg" alt="" width="64" height="64" />
+      <span>{profile.handle}</span>
+    </a>
+  </div>
 </header>
 
 <style>
   header {
-    padding-top: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .header-content {
+    width: min(58rem, calc(100% - 2 * var(--page-gutter)));
+    padding-block: 1.5rem;
   }
 
   a {
     display: inline-flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 1rem;
     min-height: 44px;
     color: var(--ink);
-    font-family: var(--mono);
-    font-size: 0.875rem;
+    font-size: 1.5rem;
+    font-weight: 650;
     text-decoration: none;
+  }
+
+  img {
+    border-radius: 0.75rem;
+    box-shadow: 0 0 1.5rem #155cce26;
+  }
+
+  @media (max-width: 480px) {
+    .header-content {
+      padding-block: 1rem;
+    }
+
+    img {
+      width: 52px;
+      height: 52px;
+    }
   }
 </style>
