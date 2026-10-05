@@ -4,28 +4,26 @@ import Icon from './Icon.astro'
 ---
 
 <section id="about" aria-labelledby="intro-heading">
+  <p class="role">
+    <Icon name="code" size={18} />
+    {profile.role}
+  </p>
   <h1 id="intro-heading">
     <span>{profile.firstName}</span>{' '}
     <span class="surname">{profile.lastName}</span>
   </h1>
-  <div class="details">
-    <p class="role">
-      <Icon name="code" size={26} />
-      {profile.role}
-    </p>
-    <p class="location">
-      <Icon name="map-pin" size={26} />
-      {profile.city}, {profile.country}
-    </p>
-  </div>
+  <p class="location">
+    <Icon name="map-pin" size={18} />
+    {profile.city}, {profile.country}
+  </p>
 </section>
 
 <style>
   h1 {
-    margin-bottom: 2.25rem;
-    font-size: clamp(3.5rem, 10vw, 6rem);
-    letter-spacing: -0.045em;
-    line-height: 1.02;
+    margin-block: 1.5rem;
+    font-size: clamp(2.5rem, 6.4vw, 5.5rem);
+    letter-spacing: -0.06em;
+    line-height: 1.05;
   }
 
   h1 > span {
@@ -36,29 +34,30 @@ import Icon from './Icon.astro'
     color: var(--blue);
   }
 
-  .details {
-    display: grid;
-    gap: 0.5rem;
-  }
-
   .role,
   .location {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.625rem;
     color: var(--muted);
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: 1rem;
+  }
+
+  .role {
+    color: var(--blue);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
   }
 
   .role :global(svg),
   .location :global(svg) {
     flex: 0 0 auto;
-    color: #8795a9;
   }
 
-  @media (max-width: 420px) {
+  @media (max-width: 480px) {
     h1 {
-      font-size: clamp(2.5rem, 12vw, 4rem);
+      font-size: clamp(2.5rem, 10.5vw, 3.125rem);
     }
   }
 </style>

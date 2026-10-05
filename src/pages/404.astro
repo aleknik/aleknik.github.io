@@ -5,7 +5,7 @@ import { profile } from '../data/site'
 ---
 
 <PageLayout title={`Page not found | ${profile.name}`} noindex>
-  <main class="container not-found" id="main" tabindex="-1">
+  <main class="container content-aligned not-found" id="main" tabindex="-1">
     <div>
       <p class="error-code">404</p>
       <h1>Page not found.</h1>
@@ -27,7 +27,8 @@ import { profile } from '../data/site'
 
   .error-code {
     margin-bottom: 1rem;
-    color: var(--muted);
+    color: var(--blue);
+    font-family: var(--mono);
   }
 
   h1 {

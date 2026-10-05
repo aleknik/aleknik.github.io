@@ -5,6 +5,11 @@ TypeScript, and scoped CSS. The full page is rendered at build time: there is no
 React runtime, hydration, canvas animation, analytics, or third-party asset request.
 The dark-blue profile keeps the copy short, uses a static geometric monogram, and
 makes LinkedIn the primary way to connect, with email as the only secondary option.
+The responsive profile pairs a typographic introduction with a decorative monogram
+on wide screens, then switches to a compact single column and full-width primary
+contact button on phones. Quiet borders, shared alignment, and balanced vertical
+spacing keep both layouts consistent. Contact controls have at least 44px touch
+targets; color transitions respect reduced-motion preferences.
 
 ## Development
 
@@ -97,8 +102,9 @@ Chrome, and iPhone-sized Safari:
 
 - Factual, concise content, a dark-blue palette, LinkedIn priority, no font downloads,
   contact destinations, and absence of page errors.
-- Keyboard/skip navigation, existing section bookmarks, reduced motion, 320-1440px layouts,
-  consistent left alignment, and 200% text sizing.
+- Keyboard/skip navigation, existing section bookmarks, reduced motion, 320-1440px layouts
+  including both sides of responsive breakpoints, consistent left alignment,
+  full-width mobile contacts, 44px touch targets, and expanded email at 200% text sizing.
 - User-triggered email reveal, no raw address in initial output, written no-JS fallback,
   clipboard success, permission denial, missing APIs, and Chromium's native clipboard.
 - Fully functional HTML without JavaScript.

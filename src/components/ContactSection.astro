@@ -15,7 +15,7 @@ import ContactLink from './ContactLink.astro'
 
 <style>
   nav {
-    margin-top: 2.25rem;
+    margin-top: 2rem;
   }
 
   ul {
@@ -34,5 +34,11 @@ import ContactLink from './ContactLink.astro'
     align-items: center;
     gap: 0.125rem;
     max-width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    li {
+      width: 100%;
+    }
   }
 </style>

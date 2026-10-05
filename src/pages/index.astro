@@ -7,59 +7,58 @@ import Monogram from '../components/Monogram.astro'
 
 <PageLayout>
   <main class="container profile-page" id="main" tabindex="-1">
-    <Monogram />
     <div class="profile-card">
       <div class="profile-content">
         <Hero />
         <ContactSection />
       </div>
+      <Monogram />
     </div>
   </main>
 </PageLayout>
 
 <style>
   .profile-page {
-    position: relative;
     display: flex;
     flex: 1;
-    width: min(58rem, calc(100% - 2 * var(--page-gutter)));
-    align-items: stretch;
-    padding-block: clamp(1.5rem, 3vh, 2.5rem);
+    align-items: center;
+    padding-block: 1rem 2.5rem;
   }
 
   .profile-card {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex: 1;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.65fr);
+    align-items: center;
+    gap: 2rem;
     width: 100%;
-    min-height: clamp(34rem, 58svh, 52rem);
-    padding: var(--content-inset);
-    border: 1px solid #32445b;
+    padding: clamp(2.5rem, 6vw, 5rem) var(--content-inset);
+    border: 1px solid var(--line);
     border-radius: 1.5rem;
     background:
-      radial-gradient(ellipse at 80% 15%, #0d315145, transparent 55%),
-      linear-gradient(145deg, #07111eef, #080e18f2);
+      radial-gradient(ellipse at 100% 0, #1e416433, transparent 65%),
+      linear-gradient(135deg, #101c2c, #0b1422 65%);
     box-shadow:
-      0 28px 80px #0005,
-      inset 0 0 3rem #0e27401c;
+      0 24px 64px #0003,
+      inset 0 1px #ffffff05;
   }
 
   .profile-content {
-    width: min(100%, 36rem);
     min-width: 0;
-    padding-top: 0.5rem;
+  }
+
+  @media (max-width: 959px) {
+    .profile-card {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   @media (max-width: 480px) {
     .profile-page {
-      padding-block: 1.5rem;
+      padding-block: 0.5rem 1.75rem;
     }
 
     .profile-card {
-      align-self: flex-start;
-      min-height: auto;
+      padding-block: 2rem;
       border-radius: 1.25rem;
     }
   }

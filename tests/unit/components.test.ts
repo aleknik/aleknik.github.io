@@ -7,6 +7,7 @@ import ContactSection from '../../src/components/ContactSection.astro'
 import EmailContact from '../../src/components/EmailContact.astro'
 import Footer from '../../src/components/Footer.astro'
 import Icon from '../../src/components/Icon.astro'
+import Monogram from '../../src/components/Monogram.astro'
 import { contactLinks, emailContact, profile } from '../../src/data/site'
 import { icons } from '../../src/lib/icons'
 
@@ -113,5 +114,19 @@ describe('static components', () => {
       props: { name: 'arrow-right' },
     })
     expect(parse(html).querySelector('svg')?.getAttribute('width')).toBe('24')
+  })
+
+  it('keeps the static monogram decorative and out of the tab order', async () => {
+    const container = await AstroContainer.create()
+    const content = parse(await container.renderToString(Monogram))
+    expect(
+      content.querySelector('.monogram')?.getAttribute('aria-hidden'),
+    ).toBe('true')
+    expect(content.querySelector('svg')?.getAttribute('focusable')).toBe(
+      'false',
+    )
+    expect(
+      content.querySelectorAll('a, button, [tabindex], animate'),
+    ).toHaveLength(0)
   })
 })

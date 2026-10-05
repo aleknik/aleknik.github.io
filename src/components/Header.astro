@@ -5,48 +5,52 @@ import { profile } from '../data/site'
 <header>
   <div class="container content-aligned header-content">
     <a href="/" aria-label={`${profile.handle}, home`}>
-      <img src="/favicon.svg" alt="" width="64" height="64" />
+      <img src="/favicon.svg" alt="" width="40" height="40" />
       <span>{profile.handle}</span>
     </a>
+    <span class="site-label">Personal site</span>
   </div>
 </header>
 
 <style>
-  header {
-    border-bottom: 1px solid var(--line);
-  }
-
   .header-content {
-    width: min(58rem, calc(100% - 2 * var(--page-gutter)));
-    padding-block: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.75rem;
   }
 
   a {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     max-width: 100%;
     min-height: 44px;
     color: var(--ink);
-    font-size: 1.5rem;
+    font-size: 1.0625rem;
     font-weight: 650;
     text-decoration: none;
   }
 
   img {
-    border-radius: 0.75rem;
-    box-shadow: 0 0 1.5rem #155cce26;
+    flex: 0 0 auto;
+    border-radius: 0.625rem;
+  }
+
+  .site-label {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-align: right;
+    text-transform: uppercase;
   }
 
   @media (max-width: 480px) {
     .header-content {
-      padding-block: 1rem;
-    }
-
-    img {
-      width: 52px;
-      height: 52px;
+      padding-block: 1.25rem;
     }
   }
 </style>

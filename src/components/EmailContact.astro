@@ -35,18 +35,19 @@ import Icon from './Icon.astro'
 
 <style>
   .email-contact {
-    margin-top: 0.75rem;
-    font-size: 0.8125rem;
+    max-width: 100%;
+    font-size: 0.875rem;
   }
 
   summary {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: space-between;
+    gap: 1rem;
     width: fit-content;
     min-height: 44px;
     color: var(--blue);
-    font-size: 1.1rem;
+    font-size: 0.9375rem;
     cursor: pointer;
     list-style: none;
   }
@@ -64,7 +65,8 @@ import Icon from './Icon.astro'
   }
 
   .email-panel {
-    padding: 0.875rem 1rem;
+    margin-top: 0.5rem;
+    padding: 1rem;
     border: 1px solid var(--line);
     border-radius: 0.625rem;
     background: #0b1423;
@@ -73,14 +75,15 @@ import Icon from './Icon.astro'
 
   [data-email-address] {
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     color: var(--ink);
   }
 
   .email-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0 1.25rem;
+    gap: 0.25rem 1.25rem;
+    margin-top: 0.5rem;
   }
 
   a,
@@ -93,7 +96,7 @@ import Icon from './Icon.astro'
     border: 0;
     background: transparent;
     color: var(--blue);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     text-decoration: none;
   }
 
@@ -105,6 +108,6 @@ import Icon from './Icon.astro'
 
   [role='status'] {
     color: var(--muted);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
   }
 </style>

@@ -150,7 +150,7 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
   await page.goto('/')
   await page.evaluate(() => document.fonts.ready)
 
-  for (const width of [320, 375, 768, 1024, 1440]) {
+  for (const width of [320, 375, 480, 481, 768, 959, 960, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     const dimensions = await page.evaluate(() => ({
       content: document.documentElement.scrollWidth,
@@ -162,6 +162,11 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
     ).toBeLessThanOrEqual(dimensions.viewport)
     await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
     await expect(page.locator('summary')).toBeInViewport()
+    if (width < 960) {
+      await expect(page.locator('.monogram')).toBeHidden()
+    } else {
+      await expect(page.locator('.monogram')).toBeVisible()
+    }
     if (width <= 480) {
       const cardHeight = await page
         .locator('.profile-card')
@@ -170,6 +175,16 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
         cardHeight,
         `mobile profile card height at ${width}px`,
       ).toBeLessThan(500)
+      const buttonWidth = await page
+        .locator('.primary')
+        .evaluate((element) => element.getBoundingClientRect().width)
+      const contentWidth = await page
+        .locator('.profile-content')
+        .evaluate((element) => element.getBoundingClientRect().width)
+      expect(
+        Math.abs(buttonWidth - contentWidth),
+        `primary contact should fill the content width at ${width}px`,
+      ).toBeLessThanOrEqual(0.5)
     }
     const heading = await page.locator('h1').evaluate((element) => ({
       height: element.getBoundingClientRect().height,
@@ -194,6 +209,41 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
         document.documentElement.clientWidth,
     ),
   ).toBe(true)
+})
+
+test('keeps expanded contact controls readable and touch-friendly at every size', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.locator('summary').click()
+
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 844 })
+    for (const textScale of [100, 200]) {
+      await page.evaluate((scale) => {
+        document.documentElement.style.fontSize = `${scale}%`
+      }, textScale)
+
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+        `expanded email overflow at ${width}px with ${textScale}% text`,
+      ).toBe(true)
+
+      for (const control of await page
+        .locator('main a, footer a[href], footer button, summary')
+        .all()) {
+        if (!(await control.isVisible())) continue
+        const bounds = await control.boundingBox()
+        if (!bounds) throw new Error('Visible contact control has no bounds.')
+        expect(bounds.width).toBeGreaterThanOrEqual(44)
+        expect(bounds.height).toBeGreaterThanOrEqual(44)
+        expect(bounds.x).toBeGreaterThanOrEqual(0)
+        expect(bounds.x + bounds.width).toBeLessThanOrEqual(width)
+      }
+    }
+  }
 })
 
 test('aligns the header, profile text, contacts, and footer to one left edge', async ({
