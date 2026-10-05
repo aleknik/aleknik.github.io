@@ -166,9 +166,10 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
       const cardHeight = await page
         .locator('.profile-card')
         .evaluate((element) => element.getBoundingClientRect().height)
-      expect(cardHeight, `mobile profile card height at ${width}px`).toBeLessThan(
-        500,
-      )
+      expect(
+        cardHeight,
+        `mobile profile card height at ${width}px`,
+      ).toBeLessThan(500)
     }
     const heading = await page.locator('h1').evaluate((element) => ({
       height: element.getBoundingClientRect().height,
