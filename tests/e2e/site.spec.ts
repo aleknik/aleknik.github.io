@@ -162,8 +162,17 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
     ).toBeLessThanOrEqual(dimensions.viewport)
     await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
     await expect(page.locator('summary')).toBeInViewport()
+    const heading = await page.locator('h1').evaluate((element) => ({
+      height: element.getBoundingClientRect().height,
+      lineHeight: Number.parseFloat(getComputedStyle(element).lineHeight),
+    }))
+    expect(
+      heading.height,
+      `profile name must stay on two lines at ${width}px`,
+    ).toBeLessThanOrEqual(heading.lineHeight * 2 + 1)
     expect(
       await page.evaluate(() => document.documentElement.scrollHeight),
+      `vertical overflow at ${width}px`,
     ).toBeLessThanOrEqual(900)
   }
 
