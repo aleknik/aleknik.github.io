@@ -209,6 +209,26 @@ test('fits narrow, tablet, and desktop screens and enlarged text', async ({
         document.documentElement.clientWidth,
     ),
   ).toBe(true)
+
+  await page.addStyleTag({
+    content: 'html { font-family: monospace; --mono: monospace; }',
+  })
+  const header = await page.locator('.header-content').evaluate((element) => {
+    const bounds = element.getBoundingClientRect()
+    const style = getComputedStyle(element)
+    return {
+      left: bounds.left + Number.parseFloat(style.paddingLeft),
+      right: bounds.right - Number.parseFloat(style.paddingRight),
+      children: Array.from(element.children, (child) => {
+        const { left, right } = child.getBoundingClientRect()
+        return { left, right }
+      }),
+    }
+  })
+  for (const child of header.children) {
+    expect(child.left).toBeGreaterThanOrEqual(header.left - 0.5)
+    expect(child.right).toBeLessThanOrEqual(header.right + 0.5)
+  }
 })
 
 test('keeps expanded contact controls readable and touch-friendly at every size', async ({

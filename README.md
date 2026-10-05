@@ -104,7 +104,8 @@ Chrome, and iPhone-sized Safari:
   contact destinations, and absence of page errors.
 - Keyboard/skip navigation, existing section bookmarks, reduced motion, 320-1440px layouts
   including both sides of responsive breakpoints, consistent left alignment,
-  full-width mobile contacts, 44px touch targets, and expanded email at 200% text sizing.
+  full-width mobile contacts, 44px touch targets, expanded email at 200% text sizing,
+  and header reflow with wider fallback fonts.
 - User-triggered email reveal, no raw address in initial output, written no-JS fallback,
   clipboard success, permission denial, missing APIs, and Chromium's native clipboard.
 - Fully functional HTML without JavaScript.
