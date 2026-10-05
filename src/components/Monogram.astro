@@ -1,40 +1,38 @@
-<div class="monogram" aria-hidden="true">
-  <svg viewBox="0 0 280 300" fill="none" focusable="false">
-    <g stroke="#29456b" stroke-width="1">
+<div class="circuit-art" aria-hidden="true">
+  <svg
+    viewBox="0 0 1000 900"
+    fill="none"
+    preserveAspectRatio="xMidYMid slice"
+    focusable="false"
+  >
+    <g stroke="#285080" stroke-width="1.5">
+      <path d="M510 0v95l38 38v115h86l54 54v91h121l58 58v74h133M570 0v64l61 61v90h-54l-73 73v84h-94v108l-52 52v105h-86l-58 58v95h-70M742 0v77l-38 38v91l68 68v91h75l48 48v80h105M868 0v58l-46 46v58l-63 63M0 640h75l57-57v-84l64-64v-90h102l52-52v-99l52-52V0M0 735h115l49-49v-81l90-90v-87h62M0 822h192l76-76v-70l58-58v-92l70-70M0 534h68l69-69v-88l54-54V0M1000 610h-81l-52 52v82l-72 72v84M1000 730h-61l-65 65v105" />
       <path
-        d="M20 60h240M20 120h240M20 180h240M20 240h240M50 30v240M110 30v240M170 30v240M230 30v240"
-        stroke-opacity=".35"
+        d="M510 0v95l38 38v115h86l54 54v91h121l58 58v74h133M0 640h75l57-57v-84l64-64v-90h102l52-52v-99l52-52V0"
+        stroke-opacity=".45"
       />
-      <rect
-        x="35"
-        y="45"
-        width="210"
-        height="210"
-        rx="12"
-        transform="rotate(-12 140 150)"
-      />
-      <rect x="35" y="45" width="210" height="210" rx="12" fill="#101e34" />
+      <circle cx="510" cy="95" r="4" />
+      <circle cx="634" cy="248" r="4" />
+      <circle cx="812" cy="391" r="4" />
+      <circle cx="194" cy="423" r="4" />
+      <circle cx="328" cy="583" r="4" />
+      <circle cx="268" cy="746" r="4" />
+      <circle cx="868" cy="104" r="4" />
     </g>
-    <path
-      d="M141 78 72 222h74l-14-32h-14l23-50 37 82h36L150 78Z"
-      fill="#74a9ff"
-    />
-    <path d="m141 78 9 0 64 144h-36l-51-112Z" fill="#3b78e2" />
-    <path d="M35 75V45h30M215 255h30v-30" stroke="#8ab6ff" stroke-width="2" />
   </svg>
 </div>
 
 <style>
-  .monogram {
-    width: 100%;
-    max-width: 280px;
-    justify-self: end;
-    align-self: center;
+  .circuit-art {
+    position: absolute;
+    inset: -1rem 0;
+    overflow: hidden;
+    opacity: 0.45;
+    pointer-events: none;
   }
 
-  @media (max-width: 767px) {
-    .monogram {
-      display: none;
-    }
+  svg {
+    width: 100%;
+    height: 100%;
   }
 </style>

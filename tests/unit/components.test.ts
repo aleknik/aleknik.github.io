@@ -5,6 +5,7 @@ import Hero from '../../src/components/Hero.astro'
 import ContactLink from '../../src/components/ContactLink.astro'
 import ContactSection from '../../src/components/ContactSection.astro'
 import EmailContact from '../../src/components/EmailContact.astro'
+import Footer from '../../src/components/Footer.astro'
 import Icon from '../../src/components/Icon.astro'
 import { contactLinks, emailContact, profile } from '../../src/data/site'
 import { icons } from '../../src/lib/icons'
@@ -45,19 +46,23 @@ describe('static components', () => {
     expect(content.textContent).toContain('(opens in a new tab)')
   })
 
-  it('prioritizes LinkedIn and keeps email behind a native disclosure', async () => {
+  it('prioritizes LinkedIn and keeps email behind a native disclosure in the footer', async () => {
     const container = await AstroContainer.create()
     const content = parse(await container.renderToString(ContactSection))
+    const footer = parse(await container.renderToString(Footer))
     expect(content.querySelector('nav')?.getAttribute('aria-label')).toBe(
       'Contact links',
     )
-    expect(content.querySelectorAll('a')).toHaveLength(2)
+    expect(content.querySelectorAll('a')).toHaveLength(1)
     expect(content.querySelectorAll('a[href]')).toHaveLength(1)
     expect(content.querySelector('a')?.getAttribute('href')).toBe(
       'https://www.linkedin.com/in/aleknik',
     )
-    expect(content.querySelector('summary')?.textContent).toContain('Email')
-    expect(content.querySelectorAll('button')).toHaveLength(1)
+    expect(footer.querySelector('summary')?.textContent).toContain('Email')
+    expect(footer.querySelectorAll('button')).toHaveLength(1)
+    expect(
+      footer.querySelector('a[href="https://github.com/aleknik"]'),
+    ).toBeTruthy()
     expect(content.querySelectorAll('h2, h3')).toHaveLength(0)
   })
 

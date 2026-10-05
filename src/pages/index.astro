@@ -7,49 +7,59 @@ import Monogram from '../components/Monogram.astro'
 
 <PageLayout>
   <main class="container profile-page" id="main" tabindex="-1">
+    <Monogram />
     <div class="profile-card">
       <div class="profile-content">
         <Hero />
         <ContactSection />
       </div>
-      <Monogram />
     </div>
   </main>
 </PageLayout>
 
 <style>
   .profile-page {
+    position: relative;
     display: flex;
     flex: 1;
-    align-items: center;
-    padding-block: 3rem;
+    width: min(58rem, calc(100% - 2 * var(--page-gutter)));
+    align-items: stretch;
+    padding-block: clamp(1.5rem, 3vh, 2.5rem);
   }
 
   .profile-card {
-    display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    align-items: center;
-    gap: 2rem;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    align-items: flex-start;
     width: 100%;
+    min-height: clamp(34rem, 58svh, 52rem);
     padding: var(--content-inset);
-    border: 1px solid var(--line);
-    border-radius: 1.25rem;
-    background: linear-gradient(120deg, #101b2c, #0b1321);
-    box-shadow: 0 28px 80px #0003;
+    border: 1px solid #32445b;
+    border-radius: 1.5rem;
+    background:
+      radial-gradient(ellipse at 80% 15%, #0d315145, transparent 55%),
+      linear-gradient(145deg, #07111eef, #080e18f2);
+    box-shadow:
+      0 28px 80px #0005,
+      inset 0 0 3rem #0e27401c;
   }
 
   .profile-content {
+    width: min(100%, 34rem);
     min-width: 0;
+    padding-top: 0.5rem;
   }
 
-  @media (max-width: 767px) {
-    .profile-card {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0;
+  @media (max-width: 480px) {
+    .profile-page {
+      padding-block: 1.5rem;
     }
 
-    .profile-page {
-      padding-block: 2rem;
+    .profile-card {
+      min-height: clamp(34rem, 62svh, 48rem);
+      border-radius: 1.25rem;
     }
   }
 </style>

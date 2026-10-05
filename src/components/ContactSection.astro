@@ -1,7 +1,6 @@
 ---
 import { contactLinks } from '../data/site'
 import ContactLink from './ContactLink.astro'
-import EmailContact from './EmailContact.astro'
 ---
 
 <nav id="connect" aria-label="Contact links">
@@ -12,12 +11,11 @@ import EmailContact from './EmailContact.astro'
       </li>
     ))}
   </ul>
-  <EmailContact />
 </nav>
 
 <style>
   nav {
-    margin-top: 2rem;
+    margin-top: 2.25rem;
   }
 
   ul {

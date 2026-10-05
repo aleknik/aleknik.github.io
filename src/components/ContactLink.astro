@@ -45,14 +45,18 @@ const { link } = Astro.props
     justify-content: flex-start;
     text-align: left;
     max-width: 100%;
-    min-height: 52px;
-    padding: 14px 18px;
+    min-height: 76px;
+    padding: 18px 30px;
     border: 1px solid #5593ff;
-    border-radius: 0.625rem;
+    border-radius: 1rem;
     color: #fff;
-    background: #2160cf;
+    background:
+      radial-gradient(ellipse at 70% 50%, #3a83e55c, transparent 70%), #2160cf;
+    font-size: 1.25rem;
     font-weight: 600;
-    box-shadow: 0 5px 24px #155cce24;
+    box-shadow:
+      0 0 2.5rem #1874ff66,
+      inset 0 0 1.5rem #4d9bff30;
   }
 
   .primary:hover {
@@ -61,9 +65,22 @@ const { link } = Astro.props
 
   .linkedin-mark {
     margin-right: 0.25rem;
-    font-size: 1.125rem;
+    font-size: 2rem;
     font-weight: 750;
     line-height: 1;
+  }
+
+  @media (max-width: 480px) {
+    .primary {
+      width: 100%;
+      min-height: 64px;
+      padding-inline: 1rem;
+      font-size: 1rem;
+    }
+
+    .linkedin-mark {
+      font-size: 1.5rem;
+    }
   }
 
   @media (forced-colors: active) {
