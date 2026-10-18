@@ -1,0 +1,46 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import Icon from '../components/Icon.astro'
+import { profile } from '../data/site'
+---
+
+<PageLayout title={`Page not found | ${profile.name}`} noindex>
+  <main class="container content-aligned not-found" id="main" tabindex="-1">
+    <div>
+      <p class="error-code">404</p>
+      <h1>Page not found.</h1>
+      <p>This page doesn't exist.</p>
+      <a href="/">
+        Back to home <Icon name="arrow-right" size={16} />
+      </a>
+    </div>
+  </main>
+</PageLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    padding-block: 4rem;
+  }
+
+  .error-code {
+    margin-bottom: 1rem;
+    color: var(--blue);
+    font-family: var(--mono);
+  }
+
+  h1 {
+    margin-bottom: 1.25rem;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    margin-top: 1.5rem;
+  }
+</style>

@@ -1,0 +1,498 @@
+import AxeBuilder from '@axe-core/playwright'
+import { expect, test } from '@playwright/test'
+import { contactLinks, profile } from '../../src/data/site'
+import { createOfflineOrigin } from './helpers/offline-origin'
+
+const footerLinkedIn = {
+  name: 'LinkedIn (opens in a new tab)',
+  exact: true,
+} as const
+
+test('keeps the footer to a copyright notice and a LinkedIn link', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const footer = page.getByRole('contentinfo')
+  await expect(footer.getByRole('link')).toHaveCount(1)
+  await expect(footer.getByRole('link', footerLinkedIn)).toHaveAttribute(
+    'href',
+    contactLinks[0].href,
+  )
+  await expect(
+    page.locator('details, summary, button, a[href^="mailto:"]'),
+  ).toHaveCount(0)
+  await expect(page.getByText(/email/i)).toHaveCount(0)
+  await expect(page.getByText("Let's connect.")).toHaveCount(0)
+})
+
+test('renders the full profile and working destinations without runtime errors', async ({
+  page,
+}, testInfo) => {
+  const errors: string[] = []
+  const requests: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text())
+  })
+  page.on('requestfailed', (request) => errors.push(request.url()))
+  page.on('request', (request) => requests.push(request.url()))
+
+  const response = await page.goto('/')
+  expect(response?.status()).toBe(200)
+  await expect(page).toHaveTitle('Aleksandar Nikolić | Software Engineer')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+    profile.name,
+  )
+  await expect(page.locator('.surname')).toHaveText('Nikolić')
+  await expect(page.getByRole('main')).toBeVisible()
+  await expect(page.locator('#about .role')).toHaveText('Software engineer')
+  await expect(page.locator('#about .location')).toHaveText('Belgrade, Serbia')
+
+  const contacts = page.getByRole('navigation', { name: 'Contact links' })
+  await expect(contacts.getByRole('link')).toHaveCount(1)
+  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0)
+  await expect(page.getByText('Personal site')).toHaveCount(0)
+  await expect(
+    page.getByRole('contentinfo').getByRole('link', footerLinkedIn),
+  ).toHaveAttribute('href', contactLinks[0].href)
+  for (const link of contactLinks) {
+    const anchor = contacts.getByRole('link', {
+      name: `${link.label} (opens in a new tab)`,
+      exact: true,
+    })
+    await expect(anchor).toHaveAttribute('href', link.href)
+    await expect(anchor).toHaveAttribute('target', '_blank')
+    await expect(anchor).toHaveAttribute('rel', 'noopener noreferrer')
+  }
+  await expect(contacts.getByRole('link').first()).toHaveAttribute(
+    'href',
+    contactLinks[0].href,
+  )
+  await expect(contacts.locator('.primary')).toHaveAccessibleName(
+    'Connect on LinkedIn (opens in a new tab)',
+  )
+  await expect(contacts.locator('.primary')).toHaveCSS(
+    'background-color',
+    'rgb(33, 96, 207)',
+  )
+
+  await page.evaluate(() => document.fonts.ready)
+  expect(errors).toEqual([])
+  const origin = new URL(page.url()).origin
+  expect(requests.every((url) => new URL(url).origin === origin)).toBe(true)
+  expect(requests.some((url) => /\.(woff2?|ttf|otf)(?:\?|$)/i.test(url))).toBe(
+    false,
+  )
+  await expect(
+    page.locator('canvas, astro-island, aside, .contact-card, h2'),
+  ).toHaveCount(0)
+  await expect(page.locator('html')).toHaveCSS(
+    'background-color',
+    'rgb(8, 14, 24)',
+  )
+  await expect(page.locator('html')).toHaveCSS('color', 'rgb(237, 242, 250)')
+  await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark')
+  const words = (await page.getByRole('main').innerText()).trim().split(/\s+/)
+  expect(
+    words.length,
+    'Keep the initial introduction and contacts concise',
+  ).toBeLessThanOrEqual(24)
+  await page.screenshot({
+    path: testInfo.outputPath('page.png'),
+    fullPage: true,
+  })
+})
+
+test('supports keyboard navigation and existing section bookmarks', async ({
+  page,
+  browserName,
+}) => {
+  await page.goto('/')
+  const nextLink =
+    browserName === 'webkit' && process.platform === 'darwin'
+      ? 'Alt+Tab'
+      : 'Tab'
+  await page.keyboard.press(nextLink)
+  await expect(
+    page.getByRole('link', { name: 'Skip to content' }),
+  ).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('main')).toBeFocused()
+
+  await page.keyboard.press(nextLink)
+  await expect(
+    page.getByRole('link', {
+      name: 'Connect on LinkedIn (opens in a new tab)',
+      exact: true,
+    }),
+  ).toBeFocused()
+  await page.keyboard.press(nextLink)
+  await expect(
+    page.getByRole('contentinfo').getByRole('link', footerLinkedIn),
+  ).toBeFocused()
+
+  await page.goto('/#connect')
+  await expect(
+    page.getByRole('navigation', { name: 'Contact links' }),
+  ).toBeInViewport()
+  await page.goto('/#about')
+  await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
+})
+
+test('fits narrow, tablet, and desktop screens and enlarged text', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+
+  for (const width of [320, 375, 480, 481, 768, 959, 960, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    const dimensions = await page.evaluate(() => ({
+      content: document.documentElement.scrollWidth,
+      viewport: document.documentElement.clientWidth,
+    }))
+    expect(
+      dimensions.content,
+      `horizontal overflow at ${width}px`,
+    ).toBeLessThanOrEqual(dimensions.viewport)
+    await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
+    await expect(page.locator('.linkedin-link')).toBeInViewport()
+    if (width < 960) {
+      await expect(page.locator('.monogram')).toBeHidden()
+    } else {
+      await expect(page.locator('.monogram')).toBeVisible()
+    }
+    if (width <= 480) {
+      const cardHeight = await page
+        .locator('.profile-card')
+        .evaluate((element) => element.getBoundingClientRect().height)
+      expect(
+        cardHeight,
+        `mobile profile card height at ${width}px`,
+      ).toBeLessThan(500)
+      const buttonWidth = await page
+        .locator('.primary')
+        .evaluate((element) => element.getBoundingClientRect().width)
+      const contentWidth = await page
+        .locator('.profile-content')
+        .evaluate((element) => element.getBoundingClientRect().width)
+      expect(
+        Math.abs(buttonWidth - contentWidth),
+        `primary contact should fill the content width at ${width}px`,
+      ).toBeLessThanOrEqual(0.5)
+    }
+    const heading = await page.locator('h1').evaluate((element) => ({
+      height: element.getBoundingClientRect().height,
+      lineHeight: Number.parseFloat(getComputedStyle(element).lineHeight),
+    }))
+    expect(
+      heading.height,
+      `profile name must stay on two lines at ${width}px`,
+    ).toBeLessThanOrEqual(heading.lineHeight * 2 + 1)
+    expect(
+      await page.evaluate(() => document.documentElement.scrollHeight),
+      `vertical overflow at ${width}px`,
+    ).toBeLessThanOrEqual(900)
+  }
+
+  await page.setViewportSize({ width: 320, height: 900 })
+  await page.addStyleTag({ content: 'html { font-size: 200%; }' })
+  expect(
+    await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth <=
+        document.documentElement.clientWidth,
+    ),
+  ).toBe(true)
+
+  await page.addStyleTag({
+    content: 'html { font-family: monospace; --mono: monospace; }',
+  })
+  const header = await page.locator('.header-content').evaluate((element) => {
+    const bounds = element.getBoundingClientRect()
+    const style = getComputedStyle(element)
+    return {
+      left: bounds.left + Number.parseFloat(style.paddingLeft),
+      right: bounds.right - Number.parseFloat(style.paddingRight),
+      children: Array.from(element.children, (child) => {
+        const { left, right } = child.getBoundingClientRect()
+        return { left, right }
+      }),
+    }
+  })
+  for (const child of header.children) {
+    expect(child.left).toBeGreaterThanOrEqual(header.left - 0.5)
+    expect(child.right).toBeLessThanOrEqual(header.right + 0.5)
+  }
+})
+
+test('keeps contact links readable and touch-friendly at every size', async ({
+  page,
+}) => {
+  await page.goto('/')
+
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 844 })
+    for (const textScale of [100, 200]) {
+      await page.evaluate((scale) => {
+        document.documentElement.style.fontSize = `${scale}%`
+      }, textScale)
+
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+        `horizontal overflow at ${width}px with ${textScale}% text`,
+      ).toBe(true)
+
+      for (const control of await page.locator('main a, footer a').all()) {
+        if (!(await control.isVisible())) continue
+        const bounds = await control.boundingBox()
+        if (!bounds) throw new Error('Visible contact control has no bounds.')
+        expect(bounds.width).toBeGreaterThanOrEqual(44)
+        expect(bounds.height).toBeGreaterThanOrEqual(44)
+        expect(bounds.x).toBeGreaterThanOrEqual(0)
+        expect(bounds.x + bounds.width).toBeLessThanOrEqual(width)
+      }
+    }
+  }
+})
+
+test('aligns the header, profile text, contacts, and footer to one left edge', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(page.locator('.primary')).toHaveCSS(
+    'justify-content',
+    'flex-start',
+  )
+  await expect(page.locator('.primary')).toHaveCSS('text-align', 'left')
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    const edges = await page.evaluate(() =>
+      [
+        'header a',
+        '.role',
+        'h1 > span:first-child',
+        '.surname',
+        '.location',
+        '.primary',
+        'footer small',
+      ].map((selector) => {
+        const element = document.querySelector(selector)
+        if (!element) throw new Error(`Missing alignment target: ${selector}`)
+        return { selector, left: element.getBoundingClientRect().left }
+      }),
+    )
+    const reference = edges.find(({ selector }) => selector === '.role')
+    if (!reference) throw new Error('Missing profile alignment reference.')
+    for (const edge of edges) {
+      expect(
+        Math.abs(edge.left - reference.left),
+        `${edge.selector} must align with the role at ${width}px`,
+      ).toBeLessThanOrEqual(0.5)
+    }
+  }
+})
+
+test('honors reduced motion without running a background animation', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await expect(page.locator('html')).toHaveCSS('scroll-behavior', 'auto')
+  await expect(page.locator('.contact-link').first()).toHaveCSS(
+    'transition-duration',
+    '0s',
+  )
+  await expect(page.locator('canvas')).toHaveCount(0)
+  expect(await page.evaluate(() => document.getAnimations().length)).toBe(0)
+})
+
+test('reloads the styled page and manifest offline after the first visit', async ({
+  page,
+  baseURL,
+}) => {
+  if (!baseURL)
+    throw new Error('The production preview URL must be configured.')
+  const origin = await createOfflineOrigin(baseURL)
+  try {
+    await page.goto(origin.url)
+    await page.evaluate(() => navigator.serviceWorker.ready)
+    await expect
+      .poll(() =>
+        page.evaluate(() => Boolean(navigator.serviceWorker.controller)),
+      )
+      .toBe(true)
+    origin.disconnect()
+    await page.reload()
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+      profile.name,
+    )
+    await expect(page.locator('html')).toHaveCSS(
+      'background-color',
+      'rgb(8, 14, 24)',
+    )
+    await expect(
+      page.getByRole('contentinfo').getByRole('link', footerLinkedIn),
+    ).toHaveAttribute('href', contactLinks[0].href)
+    const manifest = await page.evaluate(async () =>
+      (await fetch('/manifest.webmanifest')).json(),
+    )
+    expect(manifest.name).toBe(profile.name)
+    expect(manifest.background_color).toBe('#080e18')
+    await expect(
+      page.evaluate(() => fetch('/uncached-network-probe')),
+    ).rejects.toThrow()
+  } finally {
+    await origin.close()
+  }
+})
+
+test('serves a real 404 with a route back home', async ({ page }) => {
+  const response = await page.goto('/this-page-does-not-exist/')
+  expect(response?.status()).toBe(404)
+  await expect(page).toHaveTitle(`Page not found | ${profile.name}`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Page not found.',
+  )
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex, follow',
+  )
+  await page.getByRole('link', { name: 'Back to home' }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+    profile.name,
+  )
+})
+
+test('has valid canonical, social, crawler, and install metadata', async ({
+  page,
+  request,
+}) => {
+  await page.goto('/')
+  await expect(page.locator('meta[name="author"]')).toHaveAttribute(
+    'content',
+    profile.name,
+  )
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    profile.description,
+  )
+  for (const selector of [
+    'meta[property="og:title"]',
+    'meta[name="twitter:title"]',
+  ]) {
+    await expect(page.locator(selector)).toHaveAttribute(
+      'content',
+      `${profile.name} | Software Engineer`,
+    )
+  }
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+    'content',
+    `${profile.name}, software engineer based in ${profile.city}, ${profile.country}`,
+  )
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    profile.siteUrl,
+  )
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    'content',
+    `${profile.siteUrl}social-card.png`,
+  )
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    'content',
+    'summary_large_image',
+  )
+
+  const schema = await page
+    .locator('script[type="application/ld+json"]')
+    .evaluate((script) => JSON.parse(script.textContent ?? ''))
+  expect(schema['@type']).toBe('Person')
+  expect(schema.name).toBe(profile.name)
+  expect(schema.sameAs).toEqual(['https://www.linkedin.com/in/aleknik'])
+  expect(schema).not.toHaveProperty('email')
+
+  const robots = await request.get('/robots.txt')
+  expect(robots.ok()).toBe(true)
+  expect(await robots.text()).toContain(
+    `Sitemap: ${profile.siteUrl}sitemap.xml`,
+  )
+  const sitemap = await request.get('/sitemap.xml')
+  expect(sitemap.ok()).toBe(true)
+  expect(await sitemap.text()).toContain(`<loc>${profile.siteUrl}</loc>`)
+  expect(await sitemap.text()).not.toContain('404')
+
+  const manifestResponse = await request.get('/manifest.webmanifest')
+  expect(manifestResponse.ok()).toBe(true)
+  const manifest = await manifestResponse.json()
+  expect(manifest).toMatchObject({
+    name: profile.name,
+    start_url: '/',
+    scope: '/',
+    display: 'standalone',
+    theme_color: '#080e18',
+    background_color: '#080e18',
+  })
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+    'content',
+    manifest.theme_color,
+  )
+  const favicon = await request.get('/favicon.svg')
+  expect(await favicon.text()).toContain('fill="#101e34"')
+  expect(await favicon.text()).toContain('fill="#87b4ff"')
+  for (const icon of manifest.icons) {
+    const response = await request.get(icon.src)
+    expect(response.ok()).toBe(true)
+    expect(response.headers()['content-type']).toContain('image/png')
+  }
+
+  const socialImage = await request.get('/social-card.png')
+  expect(socialImage.ok()).toBe(true)
+  const png = await socialImage.body()
+  expect(png.readUInt32BE(16)).toBe(1200)
+  expect(png.readUInt32BE(20)).toBe(630)
+})
+
+test('passes WCAG 2.2 AA automated checks on both pages', async ({ page }) => {
+  for (const path of ['/', '/this-page-does-not-exist/']) {
+    await page.goto(path)
+    await page.evaluate(() => document.fonts.ready)
+    const results = await new AxeBuilder({ page })
+      .options({
+        rules: { 'label-content-name-mismatch': { enabled: true } },
+      })
+      .withTags([
+        'wcag2a',
+        'wcag2aa',
+        'wcag21a',
+        'wcag21aa',
+        'wcag22aa',
+        'best-practice',
+      ])
+      .analyze()
+    expect(results.violations, `accessibility violations on ${path}`).toEqual(
+      [],
+    )
+  }
+})
+
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false })
+
+  test('delivers the complete profile, navigation, and contact links as HTML', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+      profile.name,
+    )
+    await expect(
+      page.getByRole('contentinfo').getByRole('link', footerLinkedIn),
+    ).toHaveAttribute('href', contactLinks[0].href)
+    await expect(
+      page.getByRole('navigation', { name: 'Contact links' }),
+    ).toBeInViewport()
+  })
+})

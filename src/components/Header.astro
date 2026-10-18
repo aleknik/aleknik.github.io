@@ -1,0 +1,47 @@
+---
+import { profile } from '../data/site'
+---
+
+<header>
+  <div class="container content-aligned header-content">
+    <a href="/" aria-label={`${profile.handle}, home`}>
+      <img src="/favicon.svg" alt="" width="40" height="40" />
+      <span>{profile.handle}</span>
+    </a>
+  </div>
+</header>
+
+<style>
+  .header-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.75rem;
+  }
+
+  a {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 100%;
+    min-height: 44px;
+    color: var(--ink);
+    font-size: 1.0625rem;
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  img {
+    flex: 0 0 auto;
+    border-radius: 0.625rem;
+  }
+
+  @media (max-width: 480px) {
+    .header-content {
+      padding-block: 1.25rem;
+    }
+  }
+</style>

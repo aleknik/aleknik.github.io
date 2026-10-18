@@ -1,0 +1,65 @@
+---
+import PageLayout from '../layouts/PageLayout.astro'
+import Hero from '../components/Hero.astro'
+import ContactSection from '../components/ContactSection.astro'
+import Monogram from '../components/Monogram.astro'
+---
+
+<PageLayout>
+  <main class="container profile-page" id="main" tabindex="-1">
+    <div class="profile-card">
+      <div class="profile-content">
+        <Hero />
+        <ContactSection />
+      </div>
+      <Monogram />
+    </div>
+  </main>
+</PageLayout>
+
+<style>
+  .profile-page {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    padding-block: 1rem 2.5rem;
+  }
+
+  .profile-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.65fr);
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    padding: clamp(2.5rem, 6vw, 5rem) var(--content-inset);
+    border: 1px solid var(--line);
+    border-radius: 1.5rem;
+    background:
+      radial-gradient(ellipse at 100% 0, #1e416433, transparent 65%),
+      linear-gradient(135deg, #101c2c, #0b1422 65%);
+    box-shadow:
+      0 24px 64px #0003,
+      inset 0 1px #ffffff05;
+  }
+
+  .profile-content {
+    min-width: 0;
+  }
+
+  @media (max-width: 959px) {
+    .profile-card {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .profile-page {
+      padding-block: 0.5rem 1.75rem;
+    }
+
+    .profile-card {
+      padding-block: 2rem;
+      border-radius: 1.25rem;
+    }
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+import { contactLinks } from '../data/site'
+import ContactLink from './ContactLink.astro'
+---
+
+<nav id="connect" aria-label="Contact links">
+  <ul>
+    {contactLinks.map((link) => (
+      <li>
+        <ContactLink link={link} />
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  nav {
+    margin-top: 2rem;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.125rem;
+    max-width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    li {
+      width: 100%;
+    }
+  }
+</style>
